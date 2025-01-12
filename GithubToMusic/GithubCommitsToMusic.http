@@ -1,0 +1,6 @@
+@GithubCommitsToMusic_HostAddress = http://localhost:5057
+
+GET {{GithubCommitsToMusic_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
