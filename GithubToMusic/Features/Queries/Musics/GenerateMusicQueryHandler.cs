@@ -1,4 +1,6 @@
-﻿using GithubCommitsToMusic.Dtos;
+﻿using GithubCommitsToMusic.Constants;
+using GithubCommitsToMusic.Dtos;
+using GithubCommitsToMusic.Enums;
 using GithubCommitsToMusic.Exceptions;
 using GithubCommitsToMusic.Extensions;
 using GithubCommitsToMusic.Interfaces;
@@ -12,7 +14,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
     public class GenerateMusicQueryHandler : IRequestHandler<GenerateMusicQuery, Music>
     {
         private readonly IApplicationDbContext _applicationDbContext;
-      
+
 
         public GenerateMusicQueryHandler(IApplicationDbContext applicationDbContext)
         {
@@ -26,7 +28,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var files = Directory.GetFiles(pathss);
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             //PlayNotesSequentially(files.ToList());
-            var generatedMusics = GenerateMusic(sheets, request.Commits);
+            var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
             MergeMp3Files(generatedMusics, path + $"\\wwwroot\\Sheets\\GeneratedMusics\\{request.UserName}.mp3");
             return default;
         }
@@ -55,12 +57,16 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             }
         }
 
-        private List<Sheet> GenerateMusic(List<Sheet> sheets, IList<CommitDto> commits)
+        private List<Sheet> GenerateMusic(List<Sheet> sheets, IList<CommitDto> commits, RhythmPatternType rhythmPatternType)
         {
             List<Sheet> musicNotes = new();
             var commitAverage = (int)commits.Average(a => a.Count);
             int rhythmIndex = 0;
-
+            var rhythmPattern = Rhythmes.GetNotesPattern(rhythmPatternType);
+            var firstNote = rhythmPattern[0];
+            var secondNote = rhythmPattern[1];
+            var thirdNote = rhythmPattern[2];
+            var fourTh = rhythmPattern[3];
             foreach (var commit in commits)
             {
                 Enums.Note selectedNote;
@@ -71,25 +77,25 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 }
                 else if (commit.Count * 2 < commitAverage)
                 {
-                    selectedNote = Enums.Note.Sol;
+                    selectedNote = firstNote;
                 }
                 else if (commit.Count < commitAverage)
                 {
-                    selectedNote = Enums.Note.Do;
+                    selectedNote = secondNote;
                 }
                 else if (commit.Count == commitAverage)
                 {
-                    selectedNote = Enums.Note.Fa;
+                    selectedNote = thirdNote;
                 }
                 else
                 {
-                    selectedNote = Enums.Note.La; // Alçak commit değerleri için sakin sesler
+                    selectedNote = fourTh; // Alçak commit değerleri için sakin sesler
                 }
 
                 var note = sheets.FirstOrDefault(a => a.Note == selectedNote);
                 if (note == null || note == musicNotes.LastOrDefault())
                 {
-                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Re); // Alternatif bir nota seç
+                    note = sheets.FirstOrDefault(a => a.Note == firstNote); // Alternatif bir nota seç
                 }
 
                 musicNotes.AddIfNotNull(note);
@@ -98,6 +104,54 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
 
             return musicNotes;
         }
+
+        //private List<Sheet> GenerateMusic(List<Sheet> sheets, IList<CommitDto> commits,RhytmPatternType rhytmPatternType)
+        //{
+        //    List<Sheet> musicNotes = new();
+        //    var commitAverage = (int)commits.Average(a => a.Count);
+        //    int rhythmIndex = 0;
+        //    var rhythmPattern = Rhythmes.GetNotesPattern(rhytmPatternType);
+        //    var firstNote = rhythmPattern[0];
+        //    var secondNote = rhythmPattern[0];
+        //    var thirdNote = rhythmPattern[0];
+        //    var fourTh = rhythmPattern[0];
+        //    foreach (var commit in commits)
+        //    {
+        //        Enums.Note selectedNote;
+
+        //        if (commit.Count * 1.5 > commitAverage)
+        //        {
+        //            selectedNote = rhythmPattern[rhythmIndex % rhythmPattern.Length]; // Akor döngüsü
+        //        }
+        //        else if (commit.Count * 2 < commitAverage)
+        //        {
+        //            selectedNote = Enums.Note.Sol;
+        //        }
+        //        else if (commit.Count < commitAverage)
+        //        {
+        //            selectedNote = Enums.Note.Do;
+        //        }
+        //        else if (commit.Count == commitAverage)
+        //        {
+        //            selectedNote = Enums.Note.Fa;
+        //        }
+        //        else
+        //        {
+        //            selectedNote = Enums.Note.La; // Alçak commit değerleri için sakin sesler
+        //        }
+
+        //        var note = sheets.FirstOrDefault(a => a.Note == selectedNote);
+        //        if (note == null || note == musicNotes.LastOrDefault())
+        //        {
+        //            note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Re); // Alternatif bir nota seç
+        //        }
+
+        //        musicNotes.AddIfNotNull(note);
+        //        rhythmIndex++;
+        //    }
+
+        //    return musicNotes;
+        //}
 
 
         //private List<Sheet> GenerateMusic(List<Sheet> sheets, IList<CommitDto> commits)

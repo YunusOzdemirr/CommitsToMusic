@@ -18,7 +18,7 @@ namespace GithubCommitsToMusic.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GenerateMusic(string userName, RhytmPatternType? rhytmPatternType, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GenerateMusic(string userName, RhythmPatternType? rhytmPatternType, CancellationToken cancellationToken = default)
         {
             var query = new GetCommitsQuery()
             {
@@ -30,7 +30,7 @@ namespace GithubCommitsToMusic.Controllers
             {
                 Commits = result,
                 UserName = userName,
-                PatternType = rhytmPatternType.HasValue ? rhytmPatternType.Value : RhytmPatternType.Default
+                PatternType = rhytmPatternType.HasValue ? rhytmPatternType.Value : RhythmPatternType.Default
             };
             var generatedMusic = await _mediator.Send(generateMusicQuery, cancellationToken);
             return Ok(generatedMusic);

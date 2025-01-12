@@ -1,10 +1,11 @@
 ﻿namespace GithubCommitsToMusic.Enums
 {
-    public enum RhytmPatternType
+    public enum RhythmPatternType
     {
         Default,
         Populer,
         Happy,
         Dramatic,
+        Sad,
     }
 }

@@ -9,6 +9,6 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
     {
         public string UserName { get; set; }
         public IList<CommitDto> Commits { get; set; }
-        public RhytmPatternType PatternType { get; set; }
+        public RhythmPatternType PatternType { get; set; }
     }
 }
