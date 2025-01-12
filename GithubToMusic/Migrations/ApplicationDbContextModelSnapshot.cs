@@ -50,6 +50,36 @@ namespace GithubCommitsToMusic.Migrations
                     b.ToTable("Commits", (string)null);
                 });
 
+            modelBuilder.Entity("GithubCommitsToMusic.Models.Music", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VirtualPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Musics", (string)null);
+                });
+
             modelBuilder.Entity("GithubCommitsToMusic.Models.Sheet", b =>
                 {
                     b.Property<int>("Id")
@@ -61,6 +91,9 @@ namespace GithubCommitsToMusic.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Note")
+                        .HasColumnType("int");
 
                     b.Property<string>("VirtualPath")
                         .IsRequired()
@@ -74,43 +107,50 @@ namespace GithubCommitsToMusic.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Do",
+                            Name = "Do.MP3",
+                            Note = 0,
                             VirtualPath = "/Sheets/Do.MP3"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Re",
+                            Name = "Re.MP3",
+                            Note = 1,
                             VirtualPath = "/Sheets/Re.MP3"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Mi",
+                            Name = "Mi.MP3",
+                            Note = 2,
                             VirtualPath = "/Sheets/Mi.MP3"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Fa",
+                            Name = "Fa.MP3",
+                            Note = 3,
                             VirtualPath = "/Sheets/Fa.MP3"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Sol",
+                            Name = "Sol.MP3",
+                            Note = 4,
                             VirtualPath = "/Sheets/Sol.MP3"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "La",
+                            Name = "La.MP3",
+                            Note = 5,
                             VirtualPath = "/Sheets/La.MP3"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Si",
+                            Name = "Si.MP3",
+                            Note = 6,
                             VirtualPath = "/Sheets/Si.MP3"
                         });
                 });
@@ -150,9 +190,22 @@ namespace GithubCommitsToMusic.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GithubCommitsToMusic.Models.Music", b =>
+                {
+                    b.HasOne("GithubCommitsToMusic.Models.User", "User")
+                        .WithMany("Musics")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("GithubCommitsToMusic.Models.User", b =>
                 {
                     b.Navigation("Commits");
+
+                    b.Navigation("Musics");
                 });
 #pragma warning restore 612, 618
         }

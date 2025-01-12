@@ -24,6 +24,12 @@ namespace GithubCommitsToMusic.Services
         public async Task<List<CommitDto>> GetAllCommitsAsync(GetCommitsArgs args, CancellationToken cancellationToken = default)
         {
             ValidateArgs(args);
+            var user = await _applicationDbContext.Users.Select(a => new { Id = a.Id, UserName = a.UserName }).FirstOrDefaultAsync(a => a.UserName == args.UserName);
+            if (user != null)
+            {
+                var commitsdb = await _applicationDbContext.Commits.Where(a => a.UserId == user.Id).ToListAsync(cancellationToken);
+                return commitsdb.GetCommitsDto();
+            }
             //https://github.com/users/yunusozdemirr/contributions?from=2024-01-01&to=2025-01-11
             var url = $"https://github.com/users/{args.UserName}/contributions";
             if (args.StartDate.HasValue && args.EndDate.HasValue)
@@ -47,7 +53,7 @@ namespace GithubCommitsToMusic.Services
         {
             var userExist = _applicationDbContext.Users.AsNoTracking().Any(a => a.UserName == args.UserName);
             if (userExist) return;
-         
+
             _applicationDbContext.Users.Add(new User
             {
                 UserName = args.UserName,

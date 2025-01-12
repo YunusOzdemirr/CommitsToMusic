@@ -12,12 +12,14 @@ namespace GithubCommitsToMusic.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Commit> Commits { get; set; }
         public DbSet<Sheet> Sheets { get; set; }
+        public DbSet<Music> Musics { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new CommitConfiguration());
             modelBuilder.ApplyConfiguration(new SheetConfiguration());
+            modelBuilder.ApplyConfiguration(new MusicConfiguration());
             base.OnModelCreating(modelBuilder);
         }
 

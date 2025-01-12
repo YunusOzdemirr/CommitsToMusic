@@ -10,6 +10,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(a => a.Id);
         builder.HasMany(a => a.Commits).WithOne(a => a.User).HasForeignKey(a => a.UserId);
+        builder.HasMany(a => a.Musics).WithOne(a => a.User).HasForeignKey(a => a.UserId);
         builder.ToTable("Users");
     }
 }

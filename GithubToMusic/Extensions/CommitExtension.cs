@@ -30,4 +30,5 @@ namespace GithubCommitsToMusic.Extensions
             return commitDtos;
         }
     }
+
 }

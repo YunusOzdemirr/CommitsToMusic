@@ -20,12 +20,12 @@ builder.Services.AddMemoryCache();
 
 
 if (builder.Environment.ContentRootPath.Contains(@"\"))
-    if (!Directory.Exists(builder.Environment.ContentRootPath + @"\wwwroot" + @"\Uploads"))
-        Directory.CreateDirectory(builder.Environment.ContentRootPath + @"\wwwroot" + @"\Uploads");
+    if (!Directory.Exists(builder.Environment.ContentRootPath + @"\wwwroot" + @"\Sheets"))
+        Directory.CreateDirectory(builder.Environment.ContentRootPath + @"\wwwroot" + @"\Sheets");
 
 if (builder.Environment.ContentRootPath.Contains(@"/"))
-    if (!Directory.Exists(builder.Environment.ContentRootPath + "/wwwroot" + "/Uploads"))
-        Directory.CreateDirectory(builder.Environment.ContentRootPath + "/wwwroot" + "/Uploads");
+    if (!Directory.Exists(builder.Environment.ContentRootPath + "/wwwroot" + "/Sheets"))
+        Directory.CreateDirectory(builder.Environment.ContentRootPath + "/wwwroot" + "/Sheets");
 
 var app = builder.Build();
 
