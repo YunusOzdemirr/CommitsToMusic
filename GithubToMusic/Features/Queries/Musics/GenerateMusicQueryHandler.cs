@@ -69,7 +69,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var fourTh = rhythmPattern[3];
             foreach (var commit in commits)
             {
-                Enums.Note selectedNote;
+                Note selectedNote;
 
                 if (commit.Count * 1.5 > commitAverage)
                 {
