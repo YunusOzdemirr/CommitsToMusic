@@ -16,6 +16,7 @@ namespace GithubCommitsToMusic.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetCommits(string userName, DateTime? from, DateTime? to, CancellationToken cancellationToken = default)
         {
             var query = new GetCommitsQuery()

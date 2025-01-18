@@ -2,6 +2,7 @@
 using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
@@ -31,19 +32,20 @@ namespace GithubCommitsToMusic.Infrastructure
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // optionsBuilder.UseSqlServer(
-            // "Server=localhost;Database=Ecommerce;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password; Trusted_Connection=false;");
-            //optionsBuilder.UseSqlServer(
-            //    "Server=westartic.com;Database=CommitToMusic;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password; Trusted_Connection=false;TrustServerCertificate=True");
-            optionsBuilder.UseSqlServer(
-            "Server=localhost;Database=CommitsToMusic;Persist Security Info=True;Trusted_Connection=True;Encrypt=false");
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    // optionsBuilder.UseSqlServer(
+        //    // "Server=localhost;Database=Ecommerce;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password; Trusted_Connection=false;");
+        //    //optionsBuilder.UseSqlServer(
+        //    //    "Server=westartic.com;Database=CommitToMusic;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password; Trusted_Connection=false;TrustServerCertificate=True");
+        //    optionsBuilder.UseSqlServer(
+        //    "Server=localhost;Database=CommitsToMusic;Persist Security Info=True;Trusted_Connection=True;Encrypt=false");
 
-            // @"Server=localhost;Database=Ecommerce6;Trusted_Connection=True");
-            //Server=localhost;Database=master;Trusted_Connection=True;
+        //    // @"Server=localhost;Database=Ecommerce6;Trusted_Connection=True");
+        //    //Server=localhost;Database=master;Trusted_Connection=True;
 
-            base.OnConfiguring(optionsBuilder);
-        }
+        //    base.OnConfiguring(optionsBuilder);
+        //}
+
     }
 }
