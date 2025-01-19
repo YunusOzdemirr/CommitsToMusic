@@ -23,6 +23,11 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
 
         public async Task<Music> Handle(GenerateMusicQuery request, CancellationToken cancellationToken)
         {
+            var musicExist = await _applicationDbContext.Musics.FirstOrDefaultAsync(a => a.Name == request.UserName, cancellationToken);
+            if (musicExist is not null)
+            {
+                return musicExist;
+            }
             var path = Directory.GetCurrentDirectory();
             if (path.Contains("/"))
                 path += "/wwwroot/Sheets/";
@@ -33,8 +38,9 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             //PlayNotesSequentially(files.ToList());
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
             var musicPath = path + $"\\wwwroot\\Sheets\\GeneratedMusics\\{request.UserName}.mp3";
-            var musicVirtualPath = path + $"\\Sheets\\GeneratedMusics\\{request.UserName}.mp3";
+            var musicVirtualPath = $"/Sheets/GeneratedMusics/{request.UserName}.mp3";
             MergeMp3Files(generatedMusics, musicPath);
+            
             var user = await _applicationDbContext.Users
                 .AsNoTracking()
                 .Select(a => new { Id = a.Id, UserName = a.UserName })
@@ -48,6 +54,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 UserId = user.Id
             };
             await _applicationDbContext.Musics.AddAsync(music, cancellationToken);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
             return music;
         }
 

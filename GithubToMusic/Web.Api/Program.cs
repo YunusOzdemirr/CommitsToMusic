@@ -63,6 +63,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors(x => x
+    .WithOrigins("https://westartic.com", "https://localhost:3000", "http://localhost:3000")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .SetIsOriginAllowed(origin => IsAllowedOrigin(origin)));
+
+bool IsAllowedOrigin(string origin)
+{
+    return origin == "https://westartic.com" || origin == "https://localhost:3000" || origin == "http://localhost:3000";
+}
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
