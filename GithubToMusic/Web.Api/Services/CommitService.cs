@@ -5,6 +5,7 @@ using GithubCommitsToMusic.Exceptions;
 using GithubCommitsToMusic.Extensions;
 using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
+using GithubCommitsToMusic.Time;
 using Microsoft.EntityFrameworkCore;
 
 namespace GithubCommitsToMusic.Services
@@ -12,10 +13,11 @@ namespace GithubCommitsToMusic.Services
     public class CommitService : ICommitService
     {
         private readonly IApplicationDbContext _applicationDbContext;
-
-        public CommitService(IApplicationDbContext applicationDbContext)
+        private readonly IDateTimeProvider _dateTimeProvider;
+        public CommitService(IApplicationDbContext applicationDbContext, IDateTimeProvider dateTimeProvider)
         {
             _applicationDbContext = applicationDbContext;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         string[] patterns = new string[] { "nd.", "rd.", "st.", "th." };
@@ -57,7 +59,7 @@ namespace GithubCommitsToMusic.Services
             _applicationDbContext.Users.Add(new User
             {
                 UserName = args.UserName,
-                CreatedOn = DateTime.Now,
+                CreatedOn = _dateTimeProvider.UtcNow,
                 Commits = commits,
                 IpAddress = args.IpAddress
             });

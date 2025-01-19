@@ -4,6 +4,7 @@ using GithubCommitsToMusic.Infrastructure;
 using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Middlewares;
 using GithubCommitsToMusic.Services;
+using GithubCommitsToMusic.Time;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
@@ -33,6 +34,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddScoped<ICommitService, CommitService>();
 builder.Services.AddMediatR(config =>
 {

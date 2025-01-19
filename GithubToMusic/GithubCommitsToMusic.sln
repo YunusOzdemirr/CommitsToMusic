@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubCommitsToMusic", "Web.Api\GithubCommitsToMusic.csproj", "{35845982-688C-4272-B19E-52593F0DA764}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{76197442-AAE4-4964-9886-D5F818984F77}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DF18AB8C-F3CE-4BAB-9F75-8482F0B8FCC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{35845982-688C-4272-B19E-52593F0DA764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35845982-688C-4272-B19E-52593F0DA764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35845982-688C-4272-B19E-52593F0DA764}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76197442-AAE4-4964-9886-D5F818984F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76197442-AAE4-4964-9886-D5F818984F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76197442-AAE4-4964-9886-D5F818984F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76197442-AAE4-4964-9886-D5F818984F77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF18AB8C-F3CE-4BAB-9F75-8482F0B8FCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF18AB8C-F3CE-4BAB-9F75-8482F0B8FCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF18AB8C-F3CE-4BAB-9F75-8482F0B8FCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF18AB8C-F3CE-4BAB-9F75-8482F0B8FCC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

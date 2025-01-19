@@ -7,14 +7,18 @@ namespace GithubCommitsToMusic.Extensions;
 
 public static class MigrationExtensions
 {
-    public static void ApplyMigrations(this IApplicationBuilder app)
+    public static async Task ApplyMigrations(this IApplicationBuilder app)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
 
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        dbContext.Database.Migrate();
+        CancellationTokenSource cts = new();
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cts.Token)).Any())
+        {
+            await dbContext.Database.MigrateAsync(cts.Token);
+        }
     }
     public static IServiceCollection AddInfrastructure(
       this IServiceCollection services,
@@ -28,9 +32,8 @@ public static class MigrationExtensions
 
         services.AddDbContext<ApplicationDbContext>(
             options => options
-                .UseNpgsql(connectionString, npgsqlOptions =>
-                    npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Default))
-                .UseSnakeCaseNamingConvention());
+                .UseSqlServer(connectionString));
+        //.UseSnakeCaseNamingConvention());
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 

@@ -24,16 +24,34 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
         public async Task<Music> Handle(GenerateMusicQuery request, CancellationToken cancellationToken)
         {
             var path = Directory.GetCurrentDirectory();
-            var pathss = path + "\\wwwroot\\Sheets\\";
-            var files = Directory.GetFiles(pathss);
+            if (path.Contains("/"))
+                path += "/wwwroot/Sheets/";
+            if (path.Contains("/"))
+                path += "\\wwwroot\\Sheets\\";
+            var files = Directory.GetFiles(path);
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             //PlayNotesSequentially(files.ToList());
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
-            MergeMp3Files(generatedMusics, path + $"\\wwwroot\\Sheets\\GeneratedMusics\\{request.UserName}.mp3");
-            return default;
+            var musicPath = path + $"\\wwwroot\\Sheets\\GeneratedMusics\\{request.UserName}.mp3";
+            var musicVirtualPath = path + $"\\Sheets\\GeneratedMusics\\{request.UserName}.mp3";
+            MergeMp3Files(generatedMusics, musicPath);
+            var user = await _applicationDbContext.Users
+                .AsNoTracking()
+                .Select(a => new { Id = a.Id, UserName = a.UserName })
+                .FirstOrDefaultAsync(a => a.UserName == request.UserName, cancellationToken);
+
+            var music = new Music()
+            {
+                Name = request.UserName,
+                Path = musicPath,
+                VirtualPath = musicVirtualPath,
+                UserId = user.Id
+            };
+            await _applicationDbContext.Musics.AddAsync(music, cancellationToken);
+            return music;
         }
 
-        static void MergeMp3Files(List<Sheet> inputFiles, string outputFile)
+        void MergeMp3Files(List<Sheet> inputFiles, string outputFile)
         {
             using (var waveFileWriter = new WaveFileWriter(outputFile, new WaveFormat()))
             {
