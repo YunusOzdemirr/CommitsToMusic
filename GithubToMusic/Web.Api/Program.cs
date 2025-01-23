@@ -62,6 +62,10 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x
