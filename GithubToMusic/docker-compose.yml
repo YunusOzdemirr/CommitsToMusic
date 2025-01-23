@@ -1,0 +1,67 @@
+services:
+  redis-master:
+    image: redis
+    ports:
+      - 6379:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      # - REDIS_PASSWORD=hardestpwdevers
+    restart: always
+    volumes:
+        - local_redis_data:/data
+    networks:
+      - web-api
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "yourStrong(!)Password"
+      ACCEPT_EULA: Y
+    ports:
+      - 1433:1433
+    networks:
+      - web-api
+    volumes:
+      - mssql-data:/var/opt/mssql
+  web-api:
+    image: ${DOCKER_REGISTRY-}webapi
+    container_name: web-api
+    build:
+      context: .
+      dockerfile: Web.Api/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+    networks:
+      - web-api 
+    volumes:
+      # - /home/admin/beryque/Ecommerce.API/wwwroot/Uploads:/wwwroot/Uploads
+        - /home/admin/Sheets:/wwwroot/Sheets
+
+  # postgres:
+  #   image: postgres
+  #   container_name: postgres
+  #   environment:
+  #     - POSTGRES_DB=clean-architecture
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #   volumes:
+  #     - ./.containers/db:/var/lib/postgresql/data
+  #   ports:
+  #     - 5432:5432
+  #   networks:
+  #     - web-api # Add this line for connect from azure data studio or pgAdmin
+  # seq:
+  #   image: datalust/seq:2024.3
+  #   container_name: seq
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #   ports:
+  #     - 8081:80
+
+
+networks:
+  web-api:
+    name: web-api
+volumes:
+  mssql-data:   
+  local_redis_data:
