@@ -4,7 +4,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<!--<UserSecretsId>f7648c7d-03fe-402a-9be4-5d0b2f8c6a24</UserSecretsId>-->
+		<UserSecretsId>f7648c7d-03fe-402a-9be4-5d0b2f8c6a24</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
