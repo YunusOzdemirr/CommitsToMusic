@@ -38,7 +38,7 @@ namespace GithubCommitsToMusic.Middlewares
 
                 // get the response code and message
                 response.StatusCode = 400;
-                await response.WriteAsync("Contact with me https://www.linkedin.com/in/yunus-ozdemir/");
+                await response.WriteAsync(exception.Message);
             }
         }
     }

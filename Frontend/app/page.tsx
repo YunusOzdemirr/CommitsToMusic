@@ -14,7 +14,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
-  const apiUrl = "https://localhost:7029";
+  const apiUrl = "https://commitstomusic.com.tr";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
