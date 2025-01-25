@@ -5,6 +5,8 @@ using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Middlewares;
 using GithubCommitsToMusic.Services;
 using GithubCommitsToMusic.Time;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
@@ -43,7 +45,10 @@ builder.Services.AddMediatR(config =>
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.Configure<KestrelServerOptions>(options => {
+    options.ConfigureHttpsDefaults(options =>
+        options.ClientCertificateMode = ClientCertificateMode.NoCertificate);
+});
 
 if (builder.Environment.ContentRootPath.Contains(@"\"))
     if (!Directory.Exists(builder.Environment.ContentRootPath + @"\wwwroot" + @"\Sheets"))
