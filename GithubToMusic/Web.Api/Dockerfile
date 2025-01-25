@@ -12,10 +12,10 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Web.Api/GithubCommitsToMusic.csproj", "Web.Api/"]
-RUN dotnet restore "./Web.Api/GithubCommitsToMusic.csproj"
+COPY ["GithubCommitsToMusic.csproj", "./"]
+RUN dotnet restore "./GithubCommitsToMusic.csproj"
 COPY . .
-WORKDIR "/src/Web.Api"
+WORKDIR "/src"
 RUN dotnet build "./GithubCommitsToMusic.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
