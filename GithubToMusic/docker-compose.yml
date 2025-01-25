@@ -29,8 +29,8 @@ services:
       context: .
       dockerfile: Web.Api/Dockerfile
     ports:
-      - 5000:8080
-      - 5001:8081
+      - 8080:80
+      #- 5001:8081
     networks:
       - web-api 
     volumes:
