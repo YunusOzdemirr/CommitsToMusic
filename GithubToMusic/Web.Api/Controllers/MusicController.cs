@@ -18,7 +18,7 @@ namespace GithubCommitsToMusic.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GenerateMusic(string userName, RhythmPatternType? rhytmPatternType, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GenerateMusic(string userName, DateTime? startDate, DateTime? endDate, RhythmPatternType? rhytmPatternType, CancellationToken cancellationToken = default)
         {
             var query = new GetCommitsQuery()
             {

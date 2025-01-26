@@ -9,22 +9,21 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const [username, setUsername] = useState("");
+  const [startDate, setStartDate] = useState(""); // Start Date state
+  const [endDate, setEndDate] = useState(""); // End Date state
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState(""); // End Date state
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
-  // const apiUrl = "https://commitstomusic.com.tr";
-  const apiUrl = "https://localhost:7029";
+  const apiUrl = "https://commitstomusic.com.tr";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username) {
+    if (!username || !startDate || !endDate) {
       toast({
         title: "Error",
-        description: "Please enter a GitHub username",
+        description: "Please fill all fields",
         variant: "destructive",
       });
       return;
@@ -32,26 +31,19 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      //API REQUEST #1: Send GitHub username to backend
-      var requestUrl =
-        apiUrl + `/api/Music?userName=${username}&rhytmPatternType=Happy`;
-      if (startDate && endDate) {
-        console.log("Start Date: " + startDate);
-        console.log("End Date: " + endDate);
-        requestUrl = `${requestUrl}&startDate=${startDate}&endDate=${endDate}`;
-      }
-      const response = await fetch(requestUrl, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      //API REQUEST: Send GitHub username and dates to backend
+      const response = await fetch(
+        `${apiUrl}/api/Music?userName=${username}&startDate=${startDate}&endDate=${endDate}&rhytmPatternType=Sad`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to generate music");
 
       const data = await response.json();
-      console.log(data);
-
       const audioUrl = apiUrl + data.virtualPath;
-      console.log(audioRef.current);
 
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
@@ -71,27 +63,15 @@ export default function Home() {
       });
       setIsLoading(false);
     }
-
-    // Simulate loading for 5 seconds
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowPlayer(true);
-      toast({
-        title: "Success!",
-        description: "Your music is ready to play",
-      });
-    }, 1000);
   };
 
   const togglePlay = () => {
-    // AUDIO PLAYBACK CONTROL
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
         audioRef.current.play();
       }
-      setIsPlaying(!isPlaying);
       setIsPlaying(!isPlaying);
     }
   };
@@ -125,24 +105,19 @@ export default function Home() {
             Music & GitHub
           </h1>
           <p className="text-center text-white/80 mb-8">
-            Enter your GitHub username to get started
+            Enter your GitHub username and date range
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="relative">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Input
-                  type="text"
-                  placeholder="GitHub Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50"
-                  disabled={isLoading}
-                />
-              </motion.div>
+              <Input
+                type="text"
+                placeholder="GitHub Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50"
+                disabled={isLoading}
+              />
               <Sparkles className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 w-5 h-5" />
             </div>
 
@@ -168,69 +143,24 @@ export default function Home() {
               />
             </div>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                type="submit"
-                className="w-full bg-white text-purple-600 hover:bg-white/90 transition-all disabled:opacity-50"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Generating Music...
-                  </>
-                ) : (
-                  <>
-                    <Github className="w-5 h-5 mr-2" />
-                    Submit
-                  </>
-                )}
-              </Button>
-            </motion.div>
+            <Button
+              type="submit"
+              className="w-full bg-white text-purple-600 hover:bg-white/90 transition-all disabled:opacity-50"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Generating Music...
+                </>
+              ) : (
+                <>
+                  <Github className="w-5 h-5 mr-2" />
+                  Submit
+                </>
+              )}
+            </Button>
           </form>
-
-          <AnimatePresence>
-            {showPlayer && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.5 }}
-                className="mt-6"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white/20 rounded-lg p-4 flex items-center justify-between"
-                >
-                  <div className="text-white font-medium">
-                    Your GitHub Music
-                  </div>
-                  <Button
-                    onClick={togglePlay}
-                    variant="ghost"
-                    size="icon"
-                    className="text-white hover:bg-white/20"
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-6 h-6" />
-                    ) : (
-                      <Play className="w-6 h-6" />
-                    )}
-                  </Button>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-8 text-center text-white/60 text-sm"
-        >
-          Discover the harmony between code and music
         </motion.div>
       </motion.div>
     </div>

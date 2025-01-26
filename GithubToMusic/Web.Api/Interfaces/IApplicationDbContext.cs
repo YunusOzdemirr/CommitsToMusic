@@ -9,6 +9,7 @@ namespace GithubCommitsToMusic.Interfaces
         public DbSet<Commit> Commits { get; set; }
         public DbSet<Sheet> Sheets { get; set; }
         public DbSet<Music> Musics { get; set; }
+        public DbSet<Query> Queries { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

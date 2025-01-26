@@ -2,9 +2,6 @@
 using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace GithubCommitsToMusic.Infrastructure
 {
@@ -14,6 +11,7 @@ namespace GithubCommitsToMusic.Infrastructure
         public DbSet<Commit> Commits { get; set; }
         public DbSet<Sheet> Sheets { get; set; }
         public DbSet<Music> Musics { get; set; }
+        public DbSet<Query> Queries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +19,7 @@ namespace GithubCommitsToMusic.Infrastructure
             modelBuilder.ApplyConfiguration(new CommitConfiguration());
             modelBuilder.ApplyConfiguration(new SheetConfiguration());
             modelBuilder.ApplyConfiguration(new MusicConfiguration());
+            modelBuilder.ApplyConfiguration(new QueryConfiguration());
             base.OnModelCreating(modelBuilder);
         }
 

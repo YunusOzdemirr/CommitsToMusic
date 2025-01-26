@@ -26,11 +26,15 @@ namespace GithubCommitsToMusic.Services
         public async Task<List<CommitDto>> GetAllCommitsAsync(GetCommitsArgs args, CancellationToken cancellationToken = default)
         {
             ValidateArgs(args);
-            var user = await _applicationDbContext.Users.Select(a => new { Id = a.Id, UserName = a.UserName }).FirstOrDefaultAsync(a => a.UserName == args.UserName);
+            var user = await _applicationDbContext.Users.Select(a => new User { Id = a.Id, UserName = a.UserName }).FirstOrDefaultAsync(a => a.UserName == args.UserName);
             if (user != null)
             {
-                var commitsdb = await _applicationDbContext.Commits.Where(a => a.UserId == user.Id).ToListAsync(cancellationToken);
-                return commitsdb.GetCommitsDto();
+                var availableForNewQuery = await CheckPreviousQueriesAsync(args, user, cancellationToken);
+                if (availableForNewQuery)
+                {
+                    var commitsdb = await _applicationDbContext.Commits.Where(a => a.UserId == user.Id).Take(200).ToListAsync(cancellationToken);
+                    return commitsdb.GetCommitsDto();
+                }
             }
             //https://github.com/users/yunusozdemirr/contributions?from=2024-01-01&to=2025-01-11
             var url = $"https://github.com/users/{args.UserName}/contributions";
@@ -48,13 +52,43 @@ namespace GithubCommitsToMusic.Services
             var content = await result.Content.ReadAsStringAsync(cancellationToken);
 
             var commits = await ConvertHtmlToCommits(content);
-            await CreateUserAsync(args, commits, cancellationToken);
+            await CreateUserAsync(args, commits.Take(200).ToList(), cancellationToken);
             return commits.GetCommitsDto();
         }
+
+        private async Task<bool> CheckPreviousQueriesAsync(GetCommitsArgs args, User user, CancellationToken cancellationToken)
+        {
+            if (args.StartDate.HasValue && args.EndDate.HasValue)
+            {
+                var queries = await _applicationDbContext.Queries.Where(a => a.UserName == user.UserName).ToListAsync(cancellationToken);
+                if (queries.Count > 10)
+                    throw new BadRequestException("You have already queried this date range before. Please try again later.");
+                //var startDateResult = queries.Any(a => a.StartDate <= args.StartDate.Value.AddMonths(3)
+                //|| a.StartDate >= args.StartDate.Value.AddMonths(-3));
+                //var endDateResult = queries.Any(a => a.EndDate <= args.EndDate.Value.AddMonths(3)
+                //|| a.EndDate >= args.EndDate.Value.AddMonths(-3));
+                //if (startDateResult || endDateResult)
+                //{
+                //    throw new BadRequestException("You have already queried this date range before. Please choose a date 3 months away.");
+                //}
+                return true;
+            }
+            return false;
+        }
+
         private async Task CreateUserAsync(GetCommitsArgs args, IList<Commit> commits, CancellationToken cancellationToken)
         {
             var userExist = _applicationDbContext.Users.AsNoTracking().Any(a => a.UserName == args.UserName);
             if (userExist) return;
+            var queryResult = await _applicationDbContext.Queries.AnyAsync(a => a.UserName == args.UserName
+            && (a.StartDate != args.StartDate || a.EndDate != args.EndDate), cancellationToken);
+            if (queryResult && args.StartDate.HasValue && args.EndDate.HasValue)
+                _applicationDbContext.Queries.Add(new Query()
+                {
+                    UserName = args.UserName,
+                    StartDate = args.StartDate,
+                    EndDate = args.EndDate,
+                });
 
             _applicationDbContext.Users.Add(new User
             {
