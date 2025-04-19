@@ -10,6 +10,8 @@ namespace GithubCommitsToMusic.Infrastructure.Configurations
         {
             builder.HasKey(e => e.Id);
             builder.Property(e => e.UserName).IsRequired();
+
+            builder.ToTable("Queries");
         }
     }
 }

@@ -7,6 +7,7 @@ using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
 using GithubCommitsToMusic.Time;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace GithubCommitsToMusic.Services
 {
@@ -30,7 +31,7 @@ namespace GithubCommitsToMusic.Services
             if (user != null)
             {
                 var availableForNewQuery = await CheckPreviousQueriesAsync(args, user, cancellationToken);
-                if (availableForNewQuery)
+                if (!availableForNewQuery)
                 {
                     var commitsdb = await _applicationDbContext.Commits.Where(a => a.UserId == user.Id).Take(200).ToListAsync(cancellationToken);
                     return commitsdb.GetCommitsDto();
@@ -52,6 +53,7 @@ namespace GithubCommitsToMusic.Services
             var content = await result.Content.ReadAsStringAsync(cancellationToken);
 
             var commits = await ConvertHtmlToCommits(content);
+            await CreateQueryAsync(args, cancellationToken);
             await CreateUserAsync(args, commits.Take(200).ToList(), cancellationToken);
             return commits.GetCommitsDto();
         }
@@ -80,15 +82,6 @@ namespace GithubCommitsToMusic.Services
         {
             var userExist = _applicationDbContext.Users.AsNoTracking().Any(a => a.UserName == args.UserName);
             if (userExist) return;
-            var queryResult = await _applicationDbContext.Queries.AnyAsync(a => a.UserName == args.UserName
-            && (a.StartDate != args.StartDate || a.EndDate != args.EndDate), cancellationToken);
-            if (queryResult && args.StartDate.HasValue && args.EndDate.HasValue)
-                _applicationDbContext.Queries.Add(new Query()
-                {
-                    UserName = args.UserName,
-                    StartDate = args.StartDate,
-                    EndDate = args.EndDate,
-                });
 
             _applicationDbContext.Users.Add(new User
             {
@@ -98,6 +91,52 @@ namespace GithubCommitsToMusic.Services
                 IpAddress = args.IpAddress
             });
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        }
+        private DateTime FormatDatetime(DateTime dateTime)
+        {
+            var formattedDate = dateTime.ToString("dd/MM/yyyy");
+            if (DateTime.TryParse(formattedDate, out DateTime parsedDate))
+            {
+                return parsedDate;
+            }
+            return dateTime;
+        }
+        private async Task CreateQueryAsync(GetCommitsArgs args, CancellationToken cancellationToken)
+        {
+            string sampleInput = "";
+            string firstChar;
+            foreach (var character in sampleInput.ToArray())
+            {
+                firstChar = character.ToString();//a
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append(firstChar);
+                foreach (var character2 in sampleInput.Skip(1).ToArray())
+                {
+                    stringBuilder.Append(character2);
+                    foreach (var character3 in sampleInput.ToArray())
+                    {
+                        stringBuilder.Append(character3);
+                        Console.WriteLine(stringBuilder.ToString());
+                    }
+                }
+            }
+            if (args.StartDate.HasValue && args.EndDate.HasValue)
+            {
+                args.StartDate = FormatDatetime(args.StartDate.Value);
+                args.EndDate = FormatDatetime(args.EndDate.Value);
+            }
+            var queryResult = await _applicationDbContext.Queries.AsNoTracking().Where(a => a.UserName == args.UserName).ToListAsync(cancellationToken);
+            var hasInterrogatedBefore = queryResult.Any(a => a.StartDate == args.StartDate || a.EndDate == args.EndDate);
+            if (!hasInterrogatedBefore && args.StartDate.HasValue && args.EndDate.HasValue)
+            {
+                await _applicationDbContext.Queries.AddAsync(new Query()
+                {
+                    UserName = args.UserName,
+                    StartDate = args.StartDate,
+                    EndDate = args.EndDate,
+                }, cancellationToken);
+                await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            }
         }
 
         private async Task<List<Commit>> ConvertHtmlToCommits(string content)

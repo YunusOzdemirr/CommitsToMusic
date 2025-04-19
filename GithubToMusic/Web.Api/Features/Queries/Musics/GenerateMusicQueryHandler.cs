@@ -40,18 +40,19 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var musicPath = path + $"\\wwwroot\\Sheets\\GeneratedMusics\\{request.UserName}.mp3";
             var musicVirtualPath = $"/Sheets/GeneratedMusics/{request.UserName}.mp3";
             MergeMp3Files(generatedMusics, musicPath);
-            
+
             var user = await _applicationDbContext.Users
                 .AsNoTracking()
+                .Where(a => a.UserName == request.UserName)
                 .Select(a => new { Id = a.Id, UserName = a.UserName })
-                .FirstOrDefaultAsync(a => a.UserName == request.UserName, cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
 
             var music = new Music()
             {
                 Name = request.UserName,
                 Path = musicPath,
                 VirtualPath = musicVirtualPath,
-                UserId = user.Id
+                UserId = user?.Id ?? 0
             };
             await _applicationDbContext.Musics.AddAsync(music, cancellationToken);
             await _applicationDbContext.SaveChangesAsync(cancellationToken);

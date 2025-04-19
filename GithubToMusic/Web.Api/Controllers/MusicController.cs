@@ -23,7 +23,9 @@ namespace GithubCommitsToMusic.Controllers
             var query = new GetCommitsQuery()
             {
                 UserName = userName,
-                IpAddress = HttpContext.Connection.RemoteIpAddress.ToString()
+                IpAddress = HttpContext.Connection.RemoteIpAddress.ToString(),
+                EndDate = endDate,
+                StartDate = startDate
             };
             var result = await _mediator.Send(query, cancellationToken);
             var generateMusicQuery = new GenerateMusicQuery()
