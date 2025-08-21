@@ -10,6 +10,7 @@ services:
       - web-api
     volumes:
       - mssql-data:/var/opt/mssql
+
   web-api:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
@@ -17,56 +18,34 @@ services:
       context: .
       dockerfile: Web.Api/Dockerfile
     ports:
-      - 5511:80
+      - "5511:8080" # Match the ASPNETCORE_URLS port
     depends_on:
       - mssql
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
-      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_URLS=http://+:8080
     volumes:
-      # - /home/admin/beryque/Ecommerce.API/wwwroot/Uploads:/wwwroot/Uploads
-        - /home/admin/Sheets:/wwwroot/Sheets
+      - /home/admin/Sheets:/wwwroot/Sheets
     networks:
-      - web-api 
+      - web-api
+
   frontend:
-    image: ${DOCKER_REGISTRY-}frontend
     container_name: frontend
     build:
       context: ../Frontend
       dockerfile: Dockerfile
     ports:
-      - 3001:3001
+      - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=https://api.commitstomusic.yunusozdemirr.com
     depends_on:
       - web-api
     networks:
-      - web-api 
-
-  # postgres:
-  #   image: postgres
-  #   container_name: postgres
-  #   environment:
-  #     - POSTGRES_DB=clean-architecture
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #   volumes:
-  #     - ./.containers/db:/var/lib/postgresql/data
-  #   ports:
-  #     - 5432:5432
-  #   networks:
-  #     - web-api # Add this line for connect from azure data studio or pgAdmin
-  # seq:
-  #   image: datalust/seq:2024.3
-  #   container_name: seq
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #   ports:
-  #     - 8081:80
-
+      - web-api
 
 networks:
   web-api:
     name: web-api
+
 volumes:
-  mssql-data:   
+  mssql-data:
