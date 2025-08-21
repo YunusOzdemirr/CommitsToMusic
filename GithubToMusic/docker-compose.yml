@@ -23,7 +23,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=StockDb;User=sa;Password=yourStrong(!)Password;
     volumes:
       # - /home/admin/beryque/Ecommerce.API/wwwroot/Uploads:/wwwroot/Uploads
         - /home/admin/Sheets:/wwwroot/Sheets

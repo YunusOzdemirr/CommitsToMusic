@@ -28,4 +28,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_ENVIRONMENT=Release
-ENTRYPOINT ["dotnet", "GithubCommitsToMusic.dll"]
+ENTRYPOINT ["dotnet", "GithubCommitsToMusic.dll","--environment=Release"]
