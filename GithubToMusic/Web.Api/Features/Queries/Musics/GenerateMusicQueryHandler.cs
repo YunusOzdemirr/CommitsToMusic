@@ -29,17 +29,22 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 return musicExist;
             }
             var path = Directory.GetCurrentDirectory();
+            string specialCharacter = string.Empty;
+
             if (path.Contains("/"))
-                path += "/wwwroot/Sheets/";
-            if (path.Contains("/"))
-                path += "\\wwwroot\\Sheets\\";
+                specialCharacter = "/";
+            if (path.Contains(@"\"))
+                specialCharacter = @"\\";
+
+            path = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
+
             var files = Directory.GetFiles(path);
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             //PlayNotesSequentially(files.ToList());
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
-            var musicPath = path + $"\\wwwroot\\Sheets\\GeneratedMusics\\{request.UserName}.mp3";
+            var musicPath = string.Concat(path, "GeneratedMusics", specialCharacter, request.UserName, ".mp3");
             var musicVirtualPath = $"/Sheets/GeneratedMusics/{request.UserName}.mp3";
-            MergeMp3Files(generatedMusics, musicPath);
+            MergeMp3Files(generatedMusics, musicPath, specialCharacter);
 
             var user = await _applicationDbContext.Users
                 .AsNoTracking()
@@ -59,12 +64,12 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             return music;
         }
 
-        void MergeMp3Files(List<Sheet> inputFiles, string outputFile)
+        void MergeMp3Files(List<Sheet> inputFiles, string outputFile, string specialCharacter)
         {
             using (var waveFileWriter = new WaveFileWriter(outputFile, new WaveFormat()))
             {
                 var path = Directory.GetCurrentDirectory();
-                var pathss = path + "\\wwwroot\\Sheets\\";
+                var pathss = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
                 foreach (var sheet in inputFiles)
                 {
                     var filePath = pathss + sheet.Name;

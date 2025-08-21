@@ -17,7 +17,7 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
   // const apiUrl = "https://commitstomusic.com.tr";
-  const apiUrl = "https://localhost:7029";
+  const apiUrl = "http://localhost:5511";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,8 +111,12 @@ export default function Home() {
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
           className="flex justify-center mb-8 space-x-4"
         >
-          <Music2 className="w-12 h-12 text-white animate-bounce" />
-          <Github className="w-12 h-12 text-white animate-pulse" />
+          <a href="https://www.linkedin.com/in/yunus-ozdemir/" target="_blank" rel="noopener noreferrer">
+            <Music2 className="w-12 h-12 text-white animate-bounce" />
+          </a>
+          <a href="https://github.com/YunusOzdemirr/CommitsToMusic" target="_blank" rel="noopener noreferrer">
+            <Github className="w-12 h-12 text-white animate-pulse" />
+          </a>
         </motion.div>
 
         <motion.div

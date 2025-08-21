@@ -1,23 +1,11 @@
 services:
-  redis-master:
-    image: redis
-    ports:
-      - 6379:6379
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      # - REDIS_PASSWORD=hardestpwdevers
-    restart: always
-    volumes:
-        - local_redis_data:/data
-    networks:
-      - web-api
-  mssql-server:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       SA_PASSWORD: "yourStrong(!)Password"
       ACCEPT_EULA: Y
     ports:
-      - 1433:1433
+      - 1434:1434
     networks:
       - web-api
     volumes:
@@ -29,13 +17,30 @@ services:
       context: .
       dockerfile: Web.Api/Dockerfile
     ports:
-      - 8080:80
-      #- 5001:8081
-    networks:
-      - web-api 
+      - 5511:80
+    depends_on:
+      - mssql
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=StockDb;User=sa;Password=yourStrong(!)Password;
     volumes:
       # - /home/admin/beryque/Ecommerce.API/wwwroot/Uploads:/wwwroot/Uploads
         - /home/admin/Sheets:/wwwroot/Sheets
+    networks:
+      - web-api 
+  frontend:
+    image: ${DOCKER_REGISTRY-}frontend
+    container_name: frontend
+    build:
+      context: ../Frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3001:80
+    depends_on:
+      - web-api
+    networks:
+      - web-api 
 
   # postgres:
   #   image: postgres
@@ -64,4 +69,3 @@ networks:
     name: web-api
 volumes:
   mssql-data:   
-  local_redis_data:

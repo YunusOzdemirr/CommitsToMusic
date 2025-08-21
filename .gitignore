@@ -423,3 +423,4 @@ FodyWeavers.xsd
 **/values.dev.yaml
 LICENSE
 README.md
+Frontend/.next*

@@ -11,6 +11,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddInfrastructureServices();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -35,7 +36,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddScoped<ICommitService, CommitService>();
 builder.Services.AddMediatR(config =>
@@ -44,7 +44,6 @@ builder.Services.AddMediatR(config =>
 });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
-builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.Configure<KestrelServerOptions>(options => {
     options.ConfigureHttpsDefaults(options =>
         options.ClientCertificateMode = ClientCertificateMode.NoCertificate);
@@ -60,9 +59,9 @@ if (builder.Environment.ContentRootPath.Contains(@"/"))
 
 var app = builder.Build();
 
+await app.InitialiseDatabaseAsync();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.ApplyMigrations();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
