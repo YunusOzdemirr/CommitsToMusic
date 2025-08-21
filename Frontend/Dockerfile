@@ -25,7 +25,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-EXPOSE 3000
+EXPOSE 3001
 
 # The command to run the standalone server
 CMD ["node", "server.js"]
