@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Github, Music2, Sparkles, Play, Pause, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider"; // Import Slider
 import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,12 +13,19 @@ export default function Home() {
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState(""); // End Date state
+  const [startDate, setStartDate] = useState("2024-01-01");
+  const [endDate, setEndDate] = useState("2025-01-01");
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
-  // const apiUrl = "https://commitstomusic.com.tr";
-  const apiUrl = "http://localhost:5511";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,12 +40,9 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      //API REQUEST #1: Send GitHub username to backend
       var requestUrl =
         apiUrl + `/api/Music?userName=${username}&rhytmPatternType=Happy`;
       if (startDate && endDate) {
-        console.log("Start Date: " + startDate);
-        console.log("End Date: " + endDate);
         requestUrl = `${requestUrl}&startDate=${startDate}&endDate=${endDate}`;
       }
       const response = await fetch(requestUrl, {
@@ -46,15 +51,14 @@ export default function Home() {
       });
 
       if (!response.ok) throw new Error("Failed to generate music");
-
       const data = await response.json();
-      console.log(data);
-
       const audioUrl = apiUrl + data.virtualPath;
-      console.log(audioRef.current);
 
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
+        audioRef.current.load(); // Ensure the new audio is loaded
+        audioRef.current.play().catch(e => console.error("Playback failed", e));
+        setIsPlaying(true);
       }
 
       setIsLoading(false);
@@ -71,20 +75,9 @@ export default function Home() {
       });
       setIsLoading(false);
     }
-
-    // Simulate loading for 5 seconds
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowPlayer(true);
-      toast({
-        title: "Success!",
-        description: "Your music is ready to play",
-      });
-    }, 1000);
   };
 
   const togglePlay = () => {
-    // AUDIO PLAYBACK CONTROL
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
@@ -92,13 +85,24 @@ export default function Home() {
         audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
-      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleSeek = (value: number[]) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = value[0];
+      setCurrentTime(value[0]);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center">
-      <audio ref={audioRef} />
+      <audio
+        ref={audioRef}
+        onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+        onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+        onEnded={() => setIsPlaying(false)}
+      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -200,13 +204,9 @@ export default function Home() {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.5 }}
-                className="mt-6"
+                className="mt-6 bg-white/20 rounded-lg p-4 shadow-lg"
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white/20 rounded-lg p-4 flex items-center justify-between"
-                >
+                <div className="flex items-center justify-between">
                   <div className="text-white font-medium">
                     Your GitHub Music
                   </div>
@@ -222,7 +222,20 @@ export default function Home() {
                       <Play className="w-6 h-6" />
                     )}
                   </Button>
-                </motion.div>
+                </div>
+                <div className="mt-2">
+                  <Slider
+                    value={[currentTime]}
+                    max={duration}
+                    step={1}
+                    onValueChange={handleSeek}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-white/80 mt-1">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

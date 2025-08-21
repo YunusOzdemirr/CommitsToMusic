@@ -34,7 +34,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             if (path.Contains("/"))
                 specialCharacter = "/";
             if (path.Contains(@"\"))
-                specialCharacter = @"\\";
+                specialCharacter = @"\";
 
             path = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
 

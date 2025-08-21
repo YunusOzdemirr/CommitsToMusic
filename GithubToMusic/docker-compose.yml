@@ -36,7 +36,9 @@ services:
       context: ../Frontend
       dockerfile: Dockerfile
     ports:
-      - 3001:80
+      - 3001:3001
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.commitstomusic.yunusozdemirr.com
     depends_on:
       - web-api
     networks:

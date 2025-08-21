@@ -424,3 +424,4 @@ FodyWeavers.xsd
 LICENSE
 README.md
 Frontend/.next*
+Frontend/.env.local
