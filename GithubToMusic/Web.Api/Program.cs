@@ -73,7 +73,7 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x
-    .WithOrigins("https://localhost:3000", "http://localhost:3000", "https://commitstomusic.yunusozdemirr.com")
+    .WithOrigins("https://commitstomusic.yunusozdemirr.com")
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
@@ -81,8 +81,7 @@ app.UseCors(x => x
 
 bool IsAllowedOrigin(string origin)
 {
-    return origin == "https://commitstomusic.yunusozdemirr.com" || origin == "https://localhost:3000" 
-        || origin == "http://localhost:3000" ;
+    return origin == "https://commitstomusic.yunusozdemirr.com";
 }
 
 app.UseHttpsRedirection();
