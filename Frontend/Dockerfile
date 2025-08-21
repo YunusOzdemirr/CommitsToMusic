@@ -15,4 +15,4 @@ FROM node:20-alpine as runner
 WORKDIR /app
 COPY --from=builder /app ./
 EXPOSE 3001
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start"]
