@@ -1,5 +1,5 @@
 services:
-  mssql:
+  mssqll:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       SA_PASSWORD: "yourStrong(!)Password"
@@ -9,7 +9,7 @@ services:
     networks:
       - web-api
     volumes:
-      - mssql-data:/var/opt/mssql
+      - mssqll-data:/var/opt/mssqll
   web-api:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
@@ -19,7 +19,7 @@ services:
     ports:
       - "5511:8080" # Match the ASPNETCORE_URLS port
     depends_on:
-      - mssql
+      - mssqll
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
       - ASPNETCORE_URLS=http://+:8080
@@ -45,4 +45,4 @@ networks:
     name: web-api
 
 volumes:
-  mssql-data:
+  mssqll-data:
