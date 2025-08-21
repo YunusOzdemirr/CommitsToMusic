@@ -1,7 +1,5 @@
 using GithubCommitsToMusic;
-using GithubCommitsToMusic.Extensions;
 using GithubCommitsToMusic.Infrastructure;
-using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Middlewares;
 using GithubCommitsToMusic.Services;
 using GithubCommitsToMusic.Time;
@@ -44,7 +42,8 @@ builder.Services.AddMediatR(config =>
 });
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
-builder.Services.Configure<KestrelServerOptions>(options => {
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
     options.ConfigureHttpsDefaults(options =>
         options.ClientCertificateMode = ClientCertificateMode.NoCertificate);
 });
@@ -73,7 +72,7 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x
-    .WithOrigins("https://commitstomusic.yunusozdemirr.com")
+    .WithOrigins("https://localhost:3000", "http://localhost:3000", "https://commitstomusic.yunusozdemirr.com")
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
@@ -81,7 +80,8 @@ app.UseCors(x => x
 
 bool IsAllowedOrigin(string origin)
 {
-    return origin == "https://commitstomusic.yunusozdemirr.com";
+    return origin == "https://commitstomusic.yunusozdemirr.com" || origin == "https://localhost:3000"
+      || origin == "http://localhost:3000";
 }
 
 app.UseHttpsRedirection();
