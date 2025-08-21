@@ -10,7 +10,6 @@ services:
       - web-api
     volumes:
       - mssql-data:/var/opt/mssql
-
   web-api:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
@@ -28,21 +27,19 @@ services:
       - /home/admin/Sheets:/wwwroot/Sheets
     networks:
       - web-api
-
   frontend:
     container_name: frontend
     build:
       context: ../Frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NEXT_PUBLIC_API_URL=https://api.commitstomusic.yunusozdemirr.com
     depends_on:
       - web-api
     networks:
       - web-api
-
 networks:
   web-api:
     name: web-api

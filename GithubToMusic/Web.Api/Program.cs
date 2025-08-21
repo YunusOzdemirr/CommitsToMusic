@@ -73,7 +73,7 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x
-    .WithOrigins("https://westartic.com", "https://localhost:3000", "http://localhost:3000", "https://coladog.fun")
+    .WithOrigins("https://localhost:3000", "http://localhost:3000", "https://commitstomusic.yunusozdemirr.com")
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
@@ -81,8 +81,8 @@ app.UseCors(x => x
 
 bool IsAllowedOrigin(string origin)
 {
-    return origin == "https://westartic.com" || origin == "https://localhost:3000" 
-        || origin == "http://localhost:3000" || origin== "https://coladog.fun";
+    return origin == "https://commitstomusic.yunusozdemirr.com" || origin == "https://localhost:3000" 
+        || origin == "http://localhost:3000" ;
 }
 
 app.UseHttpsRedirection();
