@@ -218,65 +218,6 @@ export default function Home() {
           }
           onEnded={() => setIsPlaying(false)}
         />
-        <motion.div
-          initial={{ x: -300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="w-80 bg-white/10 backdrop-blur-lg border-r border-white/20 p-6 overflow-y-auto"
-        >
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-yellow-400" />
-              Leaderboard
-            </h2>
-            <p className="text-white/70 text-sm">Top commit contributors</p>
-          </div>
-
-          <div className="space-y-3">
-            {leaderboardData.map((user: any, index) => (
-              <motion.div
-                key={user.userName}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all cursor-pointer ${
-                  user.rank <= 3 ? "ring-2 ring-yellow-400/30" : ""
-                }`}
-                whileHover={{ scale: 1.02 }}
-                onClick={() => setUsername(user.userName)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {getRankIcon(user.rank)}
-                    <div>
-                      <p className="text-white font-medium text-sm">
-                        {user.userName}
-                      </p>
-                      <p className="text-white/60 text-xs">
-                        {user.totalCommit} Total Commits
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-white/80 text-xs">#{user.rank}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10"
-          >
-            <p className="text-white/60 text-xs text-center">
-              Click on any user to generate their music
-            </p>
-          </motion.div>
-        </motion.div>
-
         {/* Main Content */}
         <div className="flex-1 flex items-center justify-center p-4">
           <audio
