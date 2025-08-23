@@ -57,7 +57,9 @@ export default function Home() {
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         audioRef.current.load(); // Ensure the new audio is loaded
-        audioRef.current.play().catch(e => console.error("Playback failed", e));
+        audioRef.current
+          .play()
+          .catch((e) => console.error("Playback failed", e));
         setIsPlaying(true);
       }
 
@@ -115,10 +117,18 @@ export default function Home() {
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
           className="flex justify-center mb-8 space-x-4"
         >
-          <a href="https://www.linkedin.com/in/yunus-ozdemir/" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://www.linkedin.com/in/yunus-ozdemir/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Music2 className="w-12 h-12 text-white animate-bounce" />
           </a>
-          <a href="https://github.com/YunusOzdemirr/CommitsToMusic" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/YunusOzdemirr/CommitsToMusic"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Github className="w-12 h-12 text-white animate-pulse" />
           </a>
         </motion.div>
@@ -248,6 +258,43 @@ export default function Home() {
           className="mt-8 text-center text-white/60 text-sm"
         >
           Discover the harmony between code and music
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8 text-center text-white/60 text-sm flex gap-1 flex-col"
+        >
+          <p className="footer-text">Made From Yunus Özdemir</p>
+          <p className="footer-text">Made By .NET 9 and Nextjs</p>
+          <div className="flex gap-1 justify-center">
+            <h3>Reach Me From: </h3>
+            <a
+              href="https://www.youtube.com/@yunusozdemirs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white"
+            >
+              YouTube
+            </a>
+            <a
+              href="https://www.linkedin.com/in/yunus-ozdemir"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white"
+            >
+              LinkedIn
+            </a>
+            <a
+              href="https://github.com/YunusOzdemirr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white"
+            >
+              GitHub
+            </a>
+          </div>
         </motion.div>
       </motion.div>
     </div>
