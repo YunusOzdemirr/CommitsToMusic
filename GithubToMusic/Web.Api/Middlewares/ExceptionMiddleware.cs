@@ -1,5 +1,6 @@
 ﻿using GithubCommitsToMusic.Exceptions;
 using System.Net;
+using System.Text.Json;
 
 namespace GithubCommitsToMusic.Middlewares
 {
@@ -38,7 +39,8 @@ namespace GithubCommitsToMusic.Middlewares
 
                 // get the response code and message
                 response.StatusCode = 400;
-                await response.WriteAsync(exception.Message);
+                var json = JsonSerializer.Serialize(new { Message = exception.Message });
+                await response.WriteAsync(json);
             }
         }
     }

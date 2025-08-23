@@ -29,6 +29,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 USER root
+RUN apt-get update && apt-get install -y libasound2 libmpg123-0
 RUN chown $APP_UID:$APP_UID wwwroot/Sheets/GeneratedMusics && chmod 775 wwwroot/Sheets/GeneratedMusics
 USER $APP_UID
 

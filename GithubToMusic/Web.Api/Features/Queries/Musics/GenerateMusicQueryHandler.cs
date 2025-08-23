@@ -8,7 +8,6 @@ using GithubCommitsToMusic.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NAudio.Wave;
-using System.Security.AccessControl;
 using System.Text;
 
 namespace GithubCommitsToMusic.Features.Queries.Musics
@@ -33,7 +32,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var path = Directory.GetCurrentDirectory();
             var domain = AppDomain.CurrentDomain.BaseDirectory;
             string specialCharacter = string.Empty;
-          
+
             if (path.Contains("/"))
                 specialCharacter = "/";
             if (path.Contains(@"\"))
@@ -45,7 +44,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             //PlayNotesSequentially(files.ToList());
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
-            var musicPath = string.Concat(path, "GeneratedMusics", specialCharacter);
+            var musicPath = string.Concat(path, "GeneratedMusics", specialCharacter, request.UserName + ".mp3");
             if (Directory.Exists(musicPath))
             {
                 using (FileStream fs = File.Create(musicPath + "yunus.txt"))

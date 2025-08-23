@@ -14,6 +14,7 @@ services:
   web-api:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
+    user: root
     build:
       context: .
       dockerfile: Web.Api/Dockerfile
@@ -24,9 +25,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
       - ASPNETCORE_URLS=http://+:8080
+      - PUID=1000
+      - PGID=1000
+
     volumes:
-      - generated-music-data:/app/wwwroot/Sheets/GeneratedMusics:drwxr-xr-x+
-    command: sh -c "chmod 777 /app/wwwroot/Sheets/GeneratedMusics/ && dotnet GithubCommitsToMusic.dll --environment=Release" # Changed to chmod 777
+      - generated-music-data:/app/wwwroot/Sheets/GeneratedMusics
+    command: sh -c "chown -R www-data:www-data /app/wwwroot/Sheets/GeneratedMusics && chmod -R 775 /app/wwwroot/Sheets/GeneratedMusics && dotnet GithubCommitsToMusic.dll --environment=Release"
     networks:
       - web-api
 
