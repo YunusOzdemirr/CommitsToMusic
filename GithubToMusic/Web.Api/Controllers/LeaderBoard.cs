@@ -24,6 +24,10 @@ namespace GithubCommitsToMusic.Controllers
                 OrderBy = orderBy
             };
             var result = await _mediator.Send(query, cancellationToken);
+            if(result==null || result.Count==0)
+            {
+                return NotFound();
+            }
             return Ok(result.Select((a, b) => new UserRank(a.UserName, a.TotalCommit, b + 1, a.CreatedOn)));
         }
     }
