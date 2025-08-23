@@ -7,6 +7,7 @@ using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NLayer;
 using NAudio.Wave;
 using System.Text;
 
@@ -80,25 +81,35 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
 
         void MergeMp3Files(List<Sheet> inputFiles, string outputFile, string specialCharacter)
         {
-            using (var waveFileWriter = new WaveFileWriter(outputFile, new WaveFormat()))
+            var path = Directory.GetCurrentDirectory();
+            var pathss = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
+
+            WaveFileWriter waveFileWriter = null;
+
+            try
             {
-                var path = Directory.GetCurrentDirectory();
-                var pathss = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
                 foreach (var sheet in inputFiles)
                 {
                     var filePath = pathss + sheet.Name;
-                    if (Directory.Exists(filePath))
+                    if (!File.Exists(filePath))
                         throw new BadRequestException("Dosya bulunamadı.");
-                    using (var reader = new Mp3FileReader(filePath))
+
+                    var mpegFile = new NLayer.MpegFile(filePath);
+                    if (waveFileWriter == null)
                     {
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
-                        while ((bytesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            waveFileWriter.Write(buffer, 0, bytesRead);
-                        }
+                        var waveFormat = new WaveFormat(mpegFile.SampleRate, mpegFile.Channels);
+                        waveFileWriter = new WaveFileWriter(outputFile, waveFormat);
                     }
+
+                    var buffer = new float[mpegFile.Length];
+                    mpegFile.ReadSamples(buffer, 0, (int)mpegFile.Length);
+
+                    waveFileWriter.WriteSamples(buffer, 0, buffer.Length);
                 }
+            }
+            finally
+            {
+                waveFileWriter?.Dispose();
             }
         }
 

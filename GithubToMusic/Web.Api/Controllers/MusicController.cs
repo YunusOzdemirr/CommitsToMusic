@@ -30,7 +30,7 @@ namespace GithubCommitsToMusic.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             var generateMusicQuery = new GenerateMusicQuery()
             {
-                Commits = result,
+                Commits = result.Take(100).ToList(),
                 UserName = userName,
                 PatternType = rhytmPatternType.HasValue ? rhytmPatternType.Value : RhythmPatternType.Default,
             };
