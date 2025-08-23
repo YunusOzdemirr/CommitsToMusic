@@ -28,7 +28,9 @@ namespace GithubCommitsToMusic.Controllers
             {
                 return NotFound();
             }
-            return Ok(result.Select((a, b) => new UserRank(a.UserName, a.TotalCommit, b + 1, a.CreatedOn)));
+
+            var userRanks = result.Select((user, index) => new UserRank(user.UserName, user.TotalCommit, index + 1, user.CreatedOn)).ToList();
+            return Ok(userRanks);
         }
     }
     public record UserRank(string userName, int totalCommit, int rank, DateTime createdOn);
