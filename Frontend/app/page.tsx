@@ -36,7 +36,7 @@ export default function Home() {
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        const response = await fetch(apiUrl + "/api/users/rank");
+        const response = await fetch(apiUrl + "/api/LeaderBoard?orderBy=1");
         if (!response.ok) {
           throw new Error("Failed to fetch leaderboard data");
         }
