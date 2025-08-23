@@ -1,7 +1,9 @@
 ﻿using GithubCommitsToMusic.Enums;
 using GithubCommitsToMusic.Features.Queries.Users;
+using GithubCommitsToMusic.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GithubCommitsToMusic.Controllers
 {
@@ -10,10 +12,11 @@ namespace GithubCommitsToMusic.Controllers
     public class LeaderBoard : ControllerBase
     {
         private readonly IMediator _mediator;
-
-        public LeaderBoard(IMediator mediator)
+        private readonly IApplicationDbContext _applicationDbContext;
+        public LeaderBoard(IMediator mediator, IApplicationDbContext applicationDbContext)
         {
             _mediator = mediator;
+            _applicationDbContext = applicationDbContext;
         }
 
         [HttpGet]
@@ -31,6 +34,18 @@ namespace GithubCommitsToMusic.Controllers
 
             var userRanks = result.Select((user, index) => new UserRank(user.UserName, user.TotalCommit, index + 1, user.CreatedOn)).ToList();
             return Ok(userRanks);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveAllUserData(CancellationToken cancellationToken = default)
+        {
+            var users = await _applicationDbContext.Users.ToListAsync(cancellationToken);
+            if (users != null || users.Count > 0)
+            {
+                _applicationDbContext.Users.RemoveRange(users);
+                await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            }
+            return Ok();
         }
     }
     public sealed record UserRank(string userName, int totalCommit, int rank, DateTime createdOn);
