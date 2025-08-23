@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Github, Music2, Sparkles, Play, Pause, Loader2 } from "lucide-react";
+import { Github, Music2, Sparkles, Play, Pause, Loader2, Trophy, Medal, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider"; // Import Slider
@@ -21,6 +21,30 @@ export default function Home() {
   const { toast } = useToast();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+  // Mock leaderboard data - gerçek uygulamada API'den gelecek
+  const leaderboardData = [
+    { username: "yunusozdemirr", commits: 1247, rank: 1 },
+    { username: "brunosimon", commits: 892, rank: 2 },
+    { username: "altudev", commits: 756, rank: 3 },
+    { username: "github", commits: 634, rank: 4 },
+    { username: "torvalds", commits: 521, rank: 5 },
+    { username: "gaearon", commits: 487, rank: 6 },
+    { username: "sindresorhus", commits: 423, rank: 7 },
+    { username: "addyosmani", commits: 398, rank: 8 },
+  ];
+
+  const getRankIcon = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return <Trophy className="w-5 h-5 text-yellow-400" />;
+      case 2:
+        return <Medal className="w-5 h-5 text-gray-400" />;
+      case 3:
+        return <Award className="w-5 h-5 text-amber-600" />;
+      default:
+        return <span className="w-5 h-5 flex items-center justify-center text-white/60 font-bold text-sm">{rank}</span>;
+    }
+  };
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
@@ -98,7 +122,65 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex">
+      {/* Leaderboard Panel */}
+      <motion.div
+        initial={{ x: -300, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="w-80 bg-white/10 backdrop-blur-lg border-r border-white/20 p-6 overflow-y-auto"
+      >
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+            <Trophy className="w-6 h-6 text-yellow-400" />
+            Leaderboard
+          </h2>
+          <p className="text-white/70 text-sm">Top commit contributors</p>
+        </div>
+
+        <div className="space-y-3">
+          {leaderboardData.map((user, index) => (
+            <motion.div
+              key={user.username}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className={`bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all cursor-pointer ${
+                user.rank <= 3 ? 'ring-2 ring-yellow-400/30' : ''
+              }`}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setUsername(user.username)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {getRankIcon(user.rank)}
+                  <div>
+                    <p className="text-white font-medium text-sm">{user.username}</p>
+                    <p className="text-white/60 text-xs">{user.commits} commits</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-white/80 text-xs">#{user.rank}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10"
+        >
+          <p className="text-white/60 text-xs text-center">
+            Click on any user to generate their music
+          </p>
+        </motion.div>
+      </motion.div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-4">
       <audio
         ref={audioRef}
         onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
@@ -297,6 +379,7 @@ export default function Home() {
           </div>
         </motion.div>
       </motion.div>
+      </div>
     </div>
   );
 }
