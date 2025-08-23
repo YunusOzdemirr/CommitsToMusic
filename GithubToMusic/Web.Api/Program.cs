@@ -11,7 +11,10 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddInfrastructureServices();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -91,9 +94,9 @@ app.UseSwagger();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
-        builder.Environment.ContentRootPath + "/wwwroot" + "/Sheets"),
+        builder.Environment.ContentRootPath + "/wwwroot/Sheets/GeneratedMusics"),
     //Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads")),
-    RequestPath = new PathString("/Sheets"),
+    RequestPath = new PathString("/GeneratedMusics"),
 });
 
 app.Run();

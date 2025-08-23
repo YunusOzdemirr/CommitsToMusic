@@ -1,36 +1,43 @@
 services:
-  mssqll:
+  mssql-1:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       SA_PASSWORD: "yourStrong(!)Password"
       ACCEPT_EULA: Y
     ports:
-      - 1434:1434
+      - 1434:1434 # Corrected default MSSQL port
     networks:
       - web-api
     volumes:
-      - mssqll-data:/var/opt/mssqll
+      - mssql-data:/var/opt/mssql
+
   web-api:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
+    user: root
     build:
       context: .
       dockerfile: Web.Api/Dockerfile
     ports:
       - "5511:8080" # Match the ASPNETCORE_URLS port
     depends_on:
-      - mssqll
+      - mssql-1
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
       - ASPNETCORE_URLS=http://+:8080
+      - PUID=1000
+      - PGID=1000
+
     volumes:
-      - /home/admin/Sheets:/wwwroot/Sheets
+      - generated-music-data:/app/wwwroot/Sheets/GeneratedMusics
+    command: sh -c "chown -R www-data:www-data /app/wwwroot/Sheets/GeneratedMusics && chmod -R 775 /app/wwwroot/Sheets/GeneratedMusics && dotnet GithubCommitsToMusic.dll --environment=Release"
     networks:
       - web-api
+
   frontend:
     container_name: frontend
     build:
-      context: ../Frontend
+      context: ../Frontend # Build from the Frontend directory
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
@@ -45,4 +52,5 @@ networks:
     name: web-api
 
 volumes:
-  mssqll-data:
+  mssql-data:
+  generated-music-data:
