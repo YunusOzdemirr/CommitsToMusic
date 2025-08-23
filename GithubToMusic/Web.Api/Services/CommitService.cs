@@ -88,9 +88,17 @@ namespace GithubCommitsToMusic.Services
 
         private async Task CreateUserAsync(GetCommitsArgs args, IList<Commit> commits, IList<Commit> allCommits, CancellationToken cancellationToken)
         {
-            var userExist = _applicationDbContext.Users.AsNoTracking().Any(a => a.UserName == args.UserName);
-            if (userExist) return;
-
+            var existUser = await _applicationDbContext.Users.AsNoTracking().FirstOrDefaultAsync(a => a.UserName == args.UserName);
+            if (existUser != null)
+            {
+                if (existUser.TotalCommit == 0)
+                {
+                    existUser.TotalCommit = allCommits.Sum(a => a.Count);
+                    _applicationDbContext.Users.Update(existUser);
+                    await _applicationDbContext.SaveChangesAsync(cancellationToken);
+                }
+                return;
+            }
             _applicationDbContext.Users.Add(new User
             {
                 UserName = args.UserName,
