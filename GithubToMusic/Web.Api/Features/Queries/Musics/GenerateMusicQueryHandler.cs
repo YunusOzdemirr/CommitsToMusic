@@ -34,7 +34,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
 
-            MergeMp3Files(generatedMusics, path, specialCharacter);
+            MergeMp3Files(sheets, path, specialCharacter);
 
             var user = await _applicationDbContext.Users
                 .AsNoTracking()
@@ -80,7 +80,9 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 {
                     var filePath = pathss + sheet.Name;
                     if (Directory.Exists(filePath))
-                        throw new BadRequestException("Dosya bulunamadı.");
+                    {
+                        ConvertMp3ToWav(filePath.Replace(".wav", ".mp3"), filePath);
+                    }
 
                     using (var reader = new WaveFileReader(filePath))
                     {

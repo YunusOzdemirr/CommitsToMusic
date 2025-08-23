@@ -1,0 +1,7 @@
+Frontend/.next*
+Frontend/node_modules*
+GithubToMusic/.vs/*
+GithubToMusic/bin/Debug*
+GithubToMusic/obj*
+GithubToMusic/Web.Api/bin*
+GithubToMusic/Web.Api/obj*

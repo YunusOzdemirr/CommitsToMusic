@@ -1,5 +1,4 @@
 ﻿using GithubCommitsToMusic.Dtos;
-using GithubCommitsToMusic.Models;
 using GithubCommitsToMusic.Services;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
@@ -29,6 +28,7 @@ namespace GithubCommitsToMusic.Features.Queries.Commits
                 return result;
             }
             var commits = await _commitService.GetAllCommitsAsync(request, cancellationToken);
+          
             if (commits != null && commits.Count > 0)
             {
                 _memoryCache.Set(cacheKey, commits, TimeSpan.FromMinutes(5));
