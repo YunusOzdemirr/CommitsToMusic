@@ -29,7 +29,7 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = "https://api.commitstomusic.yunusozdemirr.com";
 
   const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -180,9 +180,20 @@ export default function Home() {
                 <div className="flex items-center gap-3">
                   {getRankIcon(user.rank)}
                   <div>
-                    <p className="text-white font-medium text-sm">
+                    <a
+                      href={`https://github.com/${user.userName}`}
+                      target="_blank"
+                      rel="noopener noreferrer" 
+                      className="flex items-center gap-3"
+                    >
+                      <img
+                        src="https://img.icons8.com/?size=100&id=62856&format=png&color=000000"
+                        width="24"
+                        height="24"
+                      ></img>
                       {user.userName}
-                    </p>
+                    </a>
+                    <p className="text-white font-medium text-sm"></p>
                     <p className="text-white/60 text-xs">
                       {user.totalCommit} commits
                     </p>
@@ -250,7 +261,7 @@ export default function Home() {
                 <Music2 className="w-12 h-12 text-white animate-bounce" />
               </a>
               <a
-                href="https://github.com/YunusOzdemirr/CommitsToMusic"
+                href="https://github.com/YunusOzdemirr"
                 target="_blank"
                 rel="noopener noreferrer"
               >

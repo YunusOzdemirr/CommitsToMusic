@@ -39,15 +39,29 @@ namespace GithubCommitsToMusic.Services
             }
             string content = await GetGithubContent(args, cancellationToken);
             var commits = await ConvertHtmlToCommits(content);
-            args.StartDate = DateTime.Now.AddYears(-25);
-            args.EndDate = DateTime.Now;
-            string allCommitContent = await GetGithubContent(args, cancellationToken);
-            var allCommits = await ConvertHtmlToCommits(content);
+            var allCommits = await GetAllCommitsHistory(args, cancellationToken);
 
             await CreateQueryAsync(args, cancellationToken);
             await CreateUserAsync(args, commits.Take(200).ToList(), allCommits, cancellationToken);
             return commits.GetCommitsDto();
         }
+
+        public async Task<List<Commit>> GetAllCommitsHistory(GetCommitsArgs args, CancellationToken cancellationToken = default)
+        {
+            args.StartDate = DateTime.Now.AddYears(-25);
+            args.EndDate = DateTime.Now.AddYears(-5);
+            List<Commit> allCommits = new();
+            for (int i = 1; i < 6; i++)
+            {
+                args.EndDate = new DateTime(args.EndDate.Value.Year + 1, 1, 1);
+                string content = await GetGithubContent(args, cancellationToken);
+                var result = await ConvertHtmlToCommits(content);
+                allCommits.AddRange(result);
+            }
+
+            return allCommits;
+        }
+
 
         private static async Task<string> GetGithubContent(GetCommitsArgs args, CancellationToken cancellationToken)
         {
@@ -89,11 +103,12 @@ namespace GithubCommitsToMusic.Services
         private async Task CreateUserAsync(GetCommitsArgs args, IList<Commit> commits, IList<Commit> allCommits, CancellationToken cancellationToken)
         {
             var existUser = await _applicationDbContext.Users.AsNoTracking().FirstOrDefaultAsync(a => a.UserName == args.UserName);
+            var totalCommitCount = allCommits.Sum(a => a.Count);
             if (existUser != null)
             {
-                if (existUser.TotalCommit == 0)
+                if (existUser.TotalCommit == 0 || existUser.TotalCommit < totalCommitCount)
                 {
-                    existUser.TotalCommit = allCommits.Sum(a => a.Count);
+                    existUser.TotalCommit = totalCommitCount;
                     _applicationDbContext.Users.Update(existUser);
                     await _applicationDbContext.SaveChangesAsync(cancellationToken);
                 }
@@ -105,7 +120,7 @@ namespace GithubCommitsToMusic.Services
                 CreatedOn = _dateTimeProvider.UtcNow,
                 Commits = commits,
                 IpAddress = args.IpAddress,
-                TotalCommit = allCommits.Sum(a => a.Count)
+                TotalCommit = totalCommitCount
             });
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
