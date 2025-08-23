@@ -52,6 +52,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             };
             await _applicationDbContext.Musics.AddAsync(music, cancellationToken);
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            music.User = null;
             return music;
         }
 
@@ -87,7 +88,6 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                         var waveFormat = new WaveFormat(mpegFile.SampleRate, mpegFile.Channels);
                         waveFileWriter = new WaveFileWriter(outputFile, waveFormat);
                     }
-
                     var buffer = new float[mpegFile.Length];
                     mpegFile.ReadSamples(buffer, 0, (int)mpegFile.Length);
 
