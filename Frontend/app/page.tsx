@@ -32,26 +32,24 @@ export default function Home() {
   const apiUrl = "https://api.commitstomusic.yunusozdemirr.com";
 
   const [leaderboardData, setLeaderboardData] = useState([]);
-
-  useEffect(() => {
-    const fetchLeaderboardData = async () => {
-      try {
-        const response = await fetch(apiUrl + "/api/LeaderBoard?orderBy=1");
-        if (!response.ok) {
-          throw new Error("Failed to fetch leaderboard data");
-        }
-        const data = await response.json();
-        setLeaderboardData(data);
-      } catch (error) {
-        console.error(error);
-        toast({
-          title: "Error",
-          description: "Failed to load leaderboard data.",
-          variant: "destructive",
-        });
+  const fetchLeaderboardData = async () => {
+    try {
+      const response = await fetch(apiUrl + "/api/LeaderBoard?orderBy=1");
+      if (!response.ok) {
+        throw new Error("Failed to fetch leaderboard data");
       }
-    };
-
+      const data = await response.json();
+      setLeaderboardData(data);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to load leaderboard data.",
+        variant: "destructive",
+      });
+    }
+  };
+  useEffect(() => {
     fetchLeaderboardData();
   }, []);
   const getRankIcon = (rank: number) => {
@@ -118,6 +116,7 @@ export default function Home() {
         title: "Success!",
         description: "Your music is ready to play",
       });
+      fetchLeaderboardData();
     } catch (error) {
       toast({
         title: "Error",
