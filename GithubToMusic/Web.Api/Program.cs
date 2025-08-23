@@ -91,7 +91,7 @@ app.UseSwagger();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
-        builder.Environment.ContentRootPath + "/wwwroot" + "/Sheets"),
+        builder.Environment.ContentRootPath + "/wwwroot/Sheets/GeneratedMusics"),
     //Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads")),
     RequestPath = new PathString("/Sheets"),
 });

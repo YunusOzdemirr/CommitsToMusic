@@ -27,5 +27,10 @@ RUN dotnet publish "./GithubCommitsToMusic.csproj" -c $BUILD_CONFIGURATION -o /a
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+USER root
+RUN chown $APP_UID:$APP_UID wwwroot/Sheets/GeneratedMusics && chmod 775 wwwroot/Sheets/GeneratedMusics
+USER $APP_UID
+
 ENV ASPNETCORE_ENVIRONMENT=Release
 ENTRYPOINT ["dotnet", "GithubCommitsToMusic.dll","--environment=Release"]

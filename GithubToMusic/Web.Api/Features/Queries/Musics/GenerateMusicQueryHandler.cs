@@ -8,6 +8,8 @@ using GithubCommitsToMusic.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NAudio.Wave;
+using System.Security.AccessControl;
+using System.Text;
 
 namespace GithubCommitsToMusic.Features.Queries.Musics
 {
@@ -29,8 +31,9 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 return musicExist;
             }
             var path = Directory.GetCurrentDirectory();
+            var domain = AppDomain.CurrentDomain.BaseDirectory;
             string specialCharacter = string.Empty;
-
+          
             if (path.Contains("/"))
                 specialCharacter = "/";
             if (path.Contains(@"\"))
@@ -42,7 +45,19 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             //PlayNotesSequentially(files.ToList());
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
-            var musicPath = string.Concat(path, "GeneratedMusics", specialCharacter, request.UserName, ".mp3");
+            var musicPath = string.Concat(path, "GeneratedMusics", specialCharacter);
+            if (Directory.Exists(musicPath))
+            {
+                using (FileStream fs = File.Create(musicPath + "yunus.txt"))
+                {
+                    // Add some text to file
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+                    fs.Write(title, 0, title.Length);
+                    byte[] author = new UTF8Encoding(true).GetBytes("Mahesh Chand");
+                    fs.Write(author, 0, author.Length);
+                }
+
+            }
             var musicVirtualPath = $"/Sheets/GeneratedMusics/{request.UserName}.mp3";
             MergeMp3Files(generatedMusics, musicPath, specialCharacter);
 
