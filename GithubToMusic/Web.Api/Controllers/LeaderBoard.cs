@@ -35,18 +35,6 @@ namespace GithubCommitsToMusic.Controllers
             var userRanks = result.Select((user, index) => new UserRank(user.UserName, user.TotalCommit, index + 1, user.CreatedOn)).ToList();
             return Ok(userRanks);
         }
-
-        [HttpGet("remove")]
-        public async Task<IActionResult> RemoveAllUserData(CancellationToken cancellationToken = default)
-        {
-            var users = await _applicationDbContext.Users.ToListAsync(cancellationToken);
-            if (users != null || users.Count > 0)
-            {
-                _applicationDbContext.Users.RemoveRange(users);
-                await _applicationDbContext.SaveChangesAsync(cancellationToken);
-            }
-            return Ok();
-        }
     }
     public sealed record UserRank(string userName, int totalCommit, int rank, DateTime createdOn);
 }
