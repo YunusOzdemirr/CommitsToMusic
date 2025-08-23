@@ -37,11 +37,23 @@ namespace GithubCommitsToMusic.Services
                     return commitsdb.GetCommitsDto();
                 }
             }
-            //https://github.com/users/yunusozdemirr/contributions?from=2024-01-01&to=2025-01-11
+            string content = await GetGithubContent(args, cancellationToken);
+            var commits = await ConvertHtmlToCommits(content);
+            args.StartDate = DateTime.Now.AddYears(-25);
+            args.EndDate = DateTime.Now;
+            string allCommitContent = await GetGithubContent(args, cancellationToken);
+            var allCommits = await ConvertHtmlToCommits(content);
+
+            await CreateQueryAsync(args, cancellationToken);
+            await CreateUserAsync(args, commits.Take(200).ToList(), allCommits, cancellationToken);
+            return commits.GetCommitsDto();
+        }
+
+        private static async Task<string> GetGithubContent(GetCommitsArgs args, CancellationToken cancellationToken)
+        {
             var url = $"https://github.com/users/{args.UserName}/contributions";
             if (args.StartDate.HasValue && args.EndDate.HasValue)
             {
-                //url+= "?from=2024-01-01&to=2025-01-1"
                 var startDate = args.StartDate.Value.ToString("yyyy-MM-dd");
                 var endDate = args.EndDate.Value.ToString("yyyy-MM-dd");
                 url += $"?from={startDate}&to={endDate}";
@@ -51,11 +63,7 @@ namespace GithubCommitsToMusic.Services
 
             var result = await httpClient.GetAsync(baseAddress, cancellationToken);
             var content = await result.Content.ReadAsStringAsync(cancellationToken);
-
-            var commits = await ConvertHtmlToCommits(content);
-            await CreateQueryAsync(args, cancellationToken);
-            await CreateUserAsync(args, commits.Take(200).ToList(), cancellationToken);
-            return commits.GetCommitsDto();
+            return content;
         }
 
         private async Task<bool> CheckPreviousQueriesAsync(GetCommitsArgs args, User user, CancellationToken cancellationToken)
@@ -78,7 +86,7 @@ namespace GithubCommitsToMusic.Services
             return false;
         }
 
-        private async Task CreateUserAsync(GetCommitsArgs args, IList<Commit> commits, CancellationToken cancellationToken)
+        private async Task CreateUserAsync(GetCommitsArgs args, IList<Commit> commits, IList<Commit> allCommits, CancellationToken cancellationToken)
         {
             var userExist = _applicationDbContext.Users.AsNoTracking().Any(a => a.UserName == args.UserName);
             if (userExist) return;
@@ -88,7 +96,8 @@ namespace GithubCommitsToMusic.Services
                 UserName = args.UserName,
                 CreatedOn = _dateTimeProvider.UtcNow,
                 Commits = commits,
-                IpAddress = args.IpAddress
+                IpAddress = args.IpAddress,
+                TotalCommit = allCommits.Sum(a => a.Count)
             });
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
