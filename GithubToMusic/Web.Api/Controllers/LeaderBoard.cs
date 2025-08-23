@@ -24,7 +24,7 @@ namespace GithubCommitsToMusic.Controllers
                 OrderBy = orderBy
             };
             var result = await _mediator.Send(query, cancellationToken);
-            if(result==null || result.Count==0)
+            if (result == null || result.Count == 0)
             {
                 return NotFound();
             }
@@ -33,5 +33,5 @@ namespace GithubCommitsToMusic.Controllers
             return Ok(userRanks);
         }
     }
-    public record UserRank(string userName, int totalCommit, int rank, DateTime createdOn);
+    public sealed record UserRank(string userName, int totalCommit, int rank, DateTime createdOn);
 }
