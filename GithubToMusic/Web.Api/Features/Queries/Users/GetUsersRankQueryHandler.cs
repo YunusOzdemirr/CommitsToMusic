@@ -19,7 +19,7 @@ namespace GithubCommitsToMusic.Features.Queries.Users
             }
             else
             {
-                return users.OrderByDescending(a => a.Commits.Count).ToList();
+                return users.OrderByDescending(a => a.TotalCommit).ToList();
             }
         }
     }
