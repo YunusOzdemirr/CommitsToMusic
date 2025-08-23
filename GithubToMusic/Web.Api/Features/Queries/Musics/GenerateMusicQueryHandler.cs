@@ -34,7 +34,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
 
-            MergeMp3Files(sheets, path, specialCharacter);
+            MergeMp3Files(generatedMusics, path, specialCharacter);
 
             var user = await _applicationDbContext.Users
                 .AsNoTracking()
