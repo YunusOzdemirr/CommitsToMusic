@@ -7,9 +7,7 @@ using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NLayer;
 using NAudio.Wave;
-using System.Text;
 
 namespace GithubCommitsToMusic.Features.Queries.Musics
 {
@@ -30,36 +28,14 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             {
                 return musicExist;
             }
-            var path = Directory.GetCurrentDirectory();
-            var domain = AppDomain.CurrentDomain.BaseDirectory;
-            string specialCharacter = string.Empty;
+            string path, specialCharacter;
+            GetMusicPathAndSpecialCharacter(request, out path, out specialCharacter);
 
-            if (path.Contains("/"))
-                specialCharacter = "/";
-            if (path.Contains(@"\"))
-                specialCharacter = @"\";
-
-            path = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
-
-            var files = Directory.GetFiles(path);
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
-            //PlayNotesSequentially(files.ToList());
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
-            var musicPath = string.Concat(path, "GeneratedMusics", specialCharacter, request.UserName + ".mp3");
-            if (Directory.Exists(musicPath))
-            {
-                using (FileStream fs = File.Create(musicPath + "yunus.txt"))
-                {
-                    // Add some text to file
-                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
-                    fs.Write(title, 0, title.Length);
-                    byte[] author = new UTF8Encoding(true).GetBytes("Mahesh Chand");
-                    fs.Write(author, 0, author.Length);
-                }
-
-            }
             var musicVirtualPath = $"/Sheets/GeneratedMusics/{request.UserName}.mp3";
-            MergeMp3Files(generatedMusics, musicPath, specialCharacter);
+
+            MergeMp3Files(generatedMusics, path, specialCharacter);
 
             var user = await _applicationDbContext.Users
                 .AsNoTracking()
@@ -70,7 +46,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var music = new Music()
             {
                 Name = request.UserName,
-                Path = musicPath,
+                Path = path,
                 VirtualPath = musicVirtualPath,
                 UserId = user?.Id ?? 0
             };
@@ -79,18 +55,29 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             return music;
         }
 
+        private static void GetMusicPathAndSpecialCharacter(GenerateMusicQuery request, out string path, out string specialCharacter)
+        {
+            path = Directory.GetCurrentDirectory();
+            var domain = AppDomain.CurrentDomain.BaseDirectory;
+            specialCharacter = string.Empty;
+            if (path.Contains("/"))
+                specialCharacter = "/";
+            if (path.Contains(@"\"))
+                specialCharacter = @"\";
+
+            path = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter, "GeneratedMusics", specialCharacter, request.UserName + ".mp3");
+        }
+
         void MergeMp3Files(List<Sheet> inputFiles, string outputFile, string specialCharacter)
         {
-            var path = Directory.GetCurrentDirectory();
-            var pathss = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
+            var sheetPath = string.Concat(Directory.GetCurrentDirectory(), specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
 
             WaveFileWriter waveFileWriter = null;
-
             try
             {
                 foreach (var sheet in inputFiles)
                 {
-                    var filePath = pathss + sheet.Name;
+                    var filePath = sheetPath + sheet.Name;
                     if (!File.Exists(filePath))
                         throw new BadRequestException("Dosya bulunamadı.");
 
@@ -160,149 +147,5 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
 
             return musicNotes;
         }
-
-        //private List<Sheet> GenerateMusic(List<Sheet> sheets, IList<CommitDto> commits,RhytmPatternType rhytmPatternType)
-        //{
-        //    List<Sheet> musicNotes = new();
-        //    var commitAverage = (int)commits.Average(a => a.Count);
-        //    int rhythmIndex = 0;
-        //    var rhythmPattern = Rhythmes.GetNotesPattern(rhytmPatternType);
-        //    var firstNote = rhythmPattern[0];
-        //    var secondNote = rhythmPattern[0];
-        //    var thirdNote = rhythmPattern[0];
-        //    var fourTh = rhythmPattern[0];
-        //    foreach (var commit in commits)
-        //    {
-        //        Enums.Note selectedNote;
-
-        //        if (commit.Count * 1.5 > commitAverage)
-        //        {
-        //            selectedNote = rhythmPattern[rhythmIndex % rhythmPattern.Length]; // Akor döngüsü
-        //        }
-        //        else if (commit.Count * 2 < commitAverage)
-        //        {
-        //            selectedNote = Enums.Note.Sol;
-        //        }
-        //        else if (commit.Count < commitAverage)
-        //        {
-        //            selectedNote = Enums.Note.Do;
-        //        }
-        //        else if (commit.Count == commitAverage)
-        //        {
-        //            selectedNote = Enums.Note.Fa;
-        //        }
-        //        else
-        //        {
-        //            selectedNote = Enums.Note.La; // Alçak commit değerleri için sakin sesler
-        //        }
-
-        //        var note = sheets.FirstOrDefault(a => a.Note == selectedNote);
-        //        if (note == null || note == musicNotes.LastOrDefault())
-        //        {
-        //            note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Re); // Alternatif bir nota seç
-        //        }
-
-        //        musicNotes.AddIfNotNull(note);
-        //        rhythmIndex++;
-        //    }
-
-        //    return musicNotes;
-        //}
-
-
-        //private List<Sheet> GenerateMusic(List<Sheet> sheets, IList<CommitDto> commits)
-        //{
-        //    List<Sheet> musicNotes = new();
-        //    var commitAverage = (int)commits.Average(a => a.Count);
-        //    var randomMultiplier = 1.5;//new Random().Next(1, 4)
-        //    foreach (var commit in commits)
-        //    {
-        //        if (commit.Count > commitAverage)
-        //        {
-        //            if (commit.Count / randomMultiplier > commitAverage)
-        //            {
-        //                var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Do);
-        //                if (note == musicNotes.LastOrDefault())
-        //                {
-        //                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Sol);
-        //                    musicNotes.AddIfNotNull(note);
-        //                }
-        //                else
-        //                    musicNotes.AddIfNotNull(note);
-        //            }
-        //            else if (commit.Count / randomMultiplier < commitAverage)
-        //            {
-        //                var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Mi);
-        //                if (note == musicNotes.LastOrDefault())
-        //                {
-        //                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.La);
-        //                    musicNotes.AddIfNotNull(note);
-        //                }
-        //                else
-        //                    musicNotes.AddIfNotNull(note);
-        //            }
-        //            else
-        //            {
-        //                var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Sol);
-        //                if (note == musicNotes.LastOrDefault())
-        //                {
-        //                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Re);
-        //                    musicNotes.AddIfNotNull(note);
-        //                }
-        //                else
-        //                    musicNotes.AddIfNotNull(note);
-        //            }
-        //        }
-        //        else if (commit.Count == commitAverage)
-        //        {
-        //            var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Fa);
-        //            if (note == musicNotes.LastOrDefault())
-        //            {
-        //                note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Si);
-        //                musicNotes.AddIfNotNull(note);
-        //            }
-        //            else
-        //                musicNotes.AddIfNotNull(note);
-        //        }
-        //        else if (commit.Count < commitAverage)
-        //        {
-        //            if (commit.Count * randomMultiplier > commitAverage)
-        //            {
-        //                var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.La);
-        //                if (note == musicNotes.LastOrDefault())
-        //                {
-        //                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Mi);
-        //                    musicNotes.AddIfNotNull(note);
-        //                }
-        //                else
-        //                    musicNotes.AddIfNotNull(note);
-        //            }
-        //            else if (commit.Count * randomMultiplier < commitAverage)
-        //            {
-        //                var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Si);
-        //                if (note == musicNotes.LastOrDefault())
-        //                {
-        //                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Fa);
-        //                    musicNotes.AddIfNotNull(note);
-        //                }
-        //                else
-        //                    musicNotes.AddIfNotNull(note);
-        //            }
-        //            else
-        //            {
-        //                var note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Re);
-        //                if (note == musicNotes.LastOrDefault())
-        //                {
-        //                    note = sheets.FirstOrDefault(a => a.Note == Enums.Note.Sol);
-        //                    musicNotes.AddIfNotNull(note);
-        //                }
-        //                else
-        //                    musicNotes.AddIfNotNull(note);
-        //            }
-        //        }
-        //    }
-        //    return musicNotes;
-        //}
-
     }
 }
