@@ -14,51 +14,51 @@ namespace GithubCommitsToMusic.Infrastructure.Configurations
                 new Sheet
                 {
                     Id = 1,
-                    VirtualPath = "/Sheets/Do.MP3",
+                    VirtualPath = "/Sheets/Do.wav",
                     Note = Enums.Note.Do,
-                    Name = "Do.MP3"
+                    Name = "Do.wav"
                 },
                 new Sheet
                 {
                     Id = 2,
-                    VirtualPath = "/Sheets/Re.MP3",
+                    VirtualPath = "/Sheets/Re.wav",
                     Note = Enums.Note.Re,
-                    Name = "Re.MP3"
+                    Name = "Re.wav"
                 },
                 new Sheet
                 {
                     Id = 3,
-                    VirtualPath = "/Sheets/Mi.MP3",
+                    VirtualPath = "/Sheets/Mi.wav",
                     Note = Enums.Note.Mi,
-                    Name = "Mi.MP3"
+                    Name = "Mi.wav"
                 },
                 new Sheet
                 {
                     Id = 4,
-                    VirtualPath = "/Sheets/Fa.MP3",
+                    VirtualPath = "/Sheets/Fa.wav",
                     Note = Enums.Note.Fa,
-                    Name = "Fa.MP3"
+                    Name = "Fa.wav"
                 },
                 new Sheet
                 {
                     Id = 5,
-                    VirtualPath = "/Sheets/Sol.MP3",
+                    VirtualPath = "/Sheets/Sol.wav",
                     Note = Enums.Note.Sol,
-                    Name = "Sol.MP3"
+                    Name = "Sol.wav"
                 },
                 new Sheet
                 {
                     Id = 6,
-                    VirtualPath = "/Sheets/La.MP3",
+                    VirtualPath = "/Sheets/La.wav",
                     Note = Enums.Note.La,
-                    Name = "La.MP3"
+                    Name = "La.wav"
                 },
                 new Sheet
                 {
                     Id = 7,
-                    VirtualPath = "/Sheets/Si.MP3",
+                    VirtualPath = "/Sheets/Si.wav",
                     Note = Enums.Note.Si,
-                    Name = "Si.MP3"
+                    Name = "Si.wav"
                 });
             builder.ToTable("Sheets");
         }

@@ -33,7 +33,6 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
 
             var sheets = await _applicationDbContext.Sheets.AsNoTracking().ToListAsync(cancellationToken);
             var generatedMusics = GenerateMusic(sheets, request.Commits, request.PatternType);
-            var musicVirtualPath = $"/Sheets/GeneratedMusics/{request.UserName}.mp3";
 
             MergeMp3Files(generatedMusics, path, specialCharacter);
 
@@ -42,6 +41,8 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 .Where(a => a.UserName == request.UserName)
                 .Select(a => new { Id = a.Id, UserName = a.UserName })
                 .FirstOrDefaultAsync(cancellationToken);
+
+            var musicVirtualPath = $"/GeneratedMusics/{request.UserName}.mp3";
 
             var music = new Music()
             {
@@ -71,32 +72,37 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
 
         void MergeMp3Files(List<Sheet> inputFiles, string outputFile, string specialCharacter)
         {
-            var sheetPath = string.Concat(Directory.GetCurrentDirectory(), specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
-
-            WaveFileWriter waveFileWriter = null;
-            try
+            using (var waveFileWriter = new WaveFileWriter(outputFile, new WaveFormat()))
             {
+                var path = Directory.GetCurrentDirectory();
+                var pathss = string.Concat(path, specialCharacter, "wwwroot", specialCharacter, "Sheets", specialCharacter);
                 foreach (var sheet in inputFiles)
                 {
-                    var filePath = sheetPath + sheet.Name;
-                    if (!File.Exists(filePath))
+                    var filePath = pathss + sheet.Name;
+                    if (Directory.Exists(filePath))
                         throw new BadRequestException("Dosya bulunamadı.");
 
-                    var mpegFile = new NLayer.MpegFile(filePath);
-                    if (waveFileWriter == null)
+                    using (var reader = new WaveFileReader(filePath))
                     {
-                        var waveFormat = new WaveFormat(mpegFile.SampleRate, mpegFile.Channels);
-                        waveFileWriter = new WaveFileWriter(outputFile, waveFormat);
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            waveFileWriter.Write(buffer, 0, bytesRead);
+                        }
                     }
-                    var buffer = new float[mpegFile.Length];
-                    mpegFile.ReadSamples(buffer, 0, (int)mpegFile.Length);
-
-                    waveFileWriter.WriteSamples(buffer, 0, buffer.Length);
                 }
             }
-            finally
+        }
+
+        private static void ConvertMp3ToWav(string _inPath_, string _outPath_)
+        {
+            using (Mp3FileReader mp3 = new Mp3FileReader(_inPath_))
             {
-                waveFileWriter?.Dispose();
+                using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(mp3))
+                {
+                    WaveFileWriter.CreateWaveFile(_outPath_, pcm);
+                }
             }
         }
 

@@ -130,51 +130,51 @@ namespace GithubCommitsToMusic.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Do.MP3",
+                            Name = "Do.wav",
                             Note = 0,
-                            VirtualPath = "/Sheets/Do.MP3"
+                            VirtualPath = "/Sheets/Do.wav"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Re.MP3",
+                            Name = "Re.wav",
                             Note = 1,
-                            VirtualPath = "/Sheets/Re.MP3"
+                            VirtualPath = "/Sheets/Re.wav"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Mi.MP3",
+                            Name = "Mi.wav",
                             Note = 2,
-                            VirtualPath = "/Sheets/Mi.MP3"
+                            VirtualPath = "/Sheets/Mi.wav"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Fa.MP3",
+                            Name = "Fa.wav",
                             Note = 3,
-                            VirtualPath = "/Sheets/Fa.MP3"
+                            VirtualPath = "/Sheets/Fa.wav"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Sol.MP3",
+                            Name = "Sol.wav",
                             Note = 4,
-                            VirtualPath = "/Sheets/Sol.MP3"
+                            VirtualPath = "/Sheets/Sol.wav"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "La.MP3",
+                            Name = "La.wav",
                             Note = 5,
-                            VirtualPath = "/Sheets/La.MP3"
+                            VirtualPath = "/Sheets/La.wav"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Si.MP3",
+                            Name = "Si.wav",
                             Note = 6,
-                            VirtualPath = "/Sheets/Si.MP3"
+                            VirtualPath = "/Sheets/Si.wav"
                         });
                 });
 
