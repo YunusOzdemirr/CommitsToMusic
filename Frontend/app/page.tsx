@@ -54,7 +54,6 @@ export default function Home() {
 
     fetchLeaderboardData();
   }, []);
-
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
