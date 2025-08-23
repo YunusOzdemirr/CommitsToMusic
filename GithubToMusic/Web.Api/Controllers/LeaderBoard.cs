@@ -36,7 +36,7 @@ namespace GithubCommitsToMusic.Controllers
             return Ok(userRanks);
         }
 
-        [HttpGet]
+        [HttpGet("remove")]
         public async Task<IActionResult> RemoveAllUserData(CancellationToken cancellationToken = default)
         {
             var users = await _applicationDbContext.Users.ToListAsync(cancellationToken);

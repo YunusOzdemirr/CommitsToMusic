@@ -181,16 +181,20 @@ export default function Home() {
                   {getRankIcon(user.rank)}
                   <div>
                     <a
-                      href={`https://github.com/${user.userName}`}
                       target="_blank"
-                      rel="noopener noreferrer" 
+                      rel="noopener noreferrer"
                       className="flex items-center gap-3"
                     >
-                      <img
-                        src="https://img.icons8.com/?size=100&id=62856&format=png&color=000000"
-                        width="24"
-                        height="24"
-                      ></img>
+                      <a
+                        href={`https://github.com/${user.userName}`}
+                        target="_blank"
+                      >
+                        <img
+                          src="https://img.icons8.com/?size=100&id=62856&format=png&color=000000"
+                          width="24"
+                          height="24"
+                        ></img>
+                      </a>
                       {user.userName}
                     </a>
                     <p className="text-white font-medium text-sm"></p>
