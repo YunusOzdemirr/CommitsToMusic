@@ -414,7 +414,6 @@ export default function Home() {
 
               <div className="flex flex-col space-y-6 sm:flex-row sm:space-y-0 sm:space-x-6">
                 <div className="relative flex-1">
-                  <label htmlFor="start-date" className="text-white/80 text-sm mb-2 block">Start Date</label>
                   <Input
                     id="start-date"
                     type="date"
@@ -425,7 +424,6 @@ export default function Home() {
                   />
                 </div>
                 <div className="relative flex-1">
-                  <label htmlFor="end-date" className="text-white/80 text-sm mb-2 block">End Date</label>
                   <Input
                     id="end-date"
                     type="date"
