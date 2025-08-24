@@ -62,11 +62,11 @@ if (builder.Environment.ContentRootPath.Contains(@"/"))
 var app = builder.Build();
 
 await app.InitialiseDatabaseAsync();
-app.UseSwagger();
-app.UseSwaggerUI();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI();
+    app.UseSwagger();
 }
 if (!app.Environment.IsDevelopment())
 {
