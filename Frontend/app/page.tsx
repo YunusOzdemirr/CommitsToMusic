@@ -517,8 +517,8 @@ export default function Home() {
             transition={{ delay: 0.6 }}
             className="mt-8 text-center text-white/60 text-sm flex gap-1 flex-col"
           >
-            <p className="footer-text">Made From Yunus Özdemir</p>
-            <p className="footer-text">Made By .NET 9 and Nextjs</p>
+            <p className="footer-text">Made By Yunus Özdemir</p>
+            <p className="footer-text">Made With .NET 9 and Nextjs</p>
             <div className="flex gap-1 justify-center">
               <h3>Reach Me From: </h3>
               <a
