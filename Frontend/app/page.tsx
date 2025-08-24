@@ -405,33 +405,34 @@ export default function Home() {
                     placeholder="GitHub Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50"
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50 w-full"
                     disabled={isLoading}
                   />
                 </motion.div>
                 <Sparkles className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 w-5 h-5" />
               </div>
 
-              <div className="relative">
-                <Input
-                  type="date"
-                  placeholder="Start Date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50"
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div className="relative">
-                <Input
-                  type="date"
-                  placeholder="End Date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50"
-                  disabled={isLoading}
-                />
+              <div className="flex flex-col space-y-6 sm:flex-row sm:space-y-0 sm:space-x-6">
+                <div className="relative flex-1">
+                  <Input
+                    type="date"
+                    placeholder="Start Date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50 w-full"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="relative flex-1">
+                  <Input
+                    type="date"
+                    placeholder="End Date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50 w-full"
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
 
               <motion.div
