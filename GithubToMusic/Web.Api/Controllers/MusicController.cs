@@ -28,6 +28,9 @@ namespace GithubCommitsToMusic.Controllers
                 StartDate = startDate
             };
             var result = await _mediator.Send(query, cancellationToken);
+            if (result == null || result.Count == 0)
+                return NotFound();
+
             var generateMusicQuery = new GenerateMusicQuery()
             {
                 Commits = result.Take(100).ToList(),

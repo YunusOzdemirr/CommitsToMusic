@@ -40,7 +40,10 @@ namespace GithubCommitsToMusic.Services
             string content = await GetGithubContent(args, cancellationToken);
             var commits = await ConvertHtmlToCommits(content);
             var allCommits = await GetAllCommitsHistory(args, cancellationToken);
+            if (allCommits == null || allCommits.Count == 0)
+                return default;
 
+            commits = commits.Count == 0 ? allCommits : commits;
             await CreateQueryAsync(args, cancellationToken);
             await CreateUserAsync(args, commits.Take(200).ToList(), allCommits, cancellationToken);
             return commits.GetCommitsDto();

@@ -1,7 +1,6 @@
 ﻿using GithubCommitsToMusic.Constants;
 using GithubCommitsToMusic.Dtos;
 using GithubCommitsToMusic.Enums;
-using GithubCommitsToMusic.Exceptions;
 using GithubCommitsToMusic.Extensions;
 using GithubCommitsToMusic.Interfaces;
 using GithubCommitsToMusic.Models;
@@ -118,23 +117,24 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
             var secondNote = rhythmPattern[1];
             var thirdNote = rhythmPattern[2];
             var fourTh = rhythmPattern[3];
+            Note lastNote = Note.Do;
             foreach (var commit in commits)
             {
                 Note selectedNote;
 
-                if (commit.Count * 1.5 > commitAverage)
+                if (commit.Count * 1.5 > commitAverage && lastNote != rhythmPattern[rhythmIndex % rhythmPattern.Length])
                 {
                     selectedNote = rhythmPattern[rhythmIndex % rhythmPattern.Length]; // Akor döngüsü
                 }
-                else if (commit.Count * 2 < commitAverage)
+                else if (commit.Count * 2 < commitAverage && lastNote != firstNote)
                 {
                     selectedNote = firstNote;
                 }
-                else if (commit.Count < commitAverage)
+                else if (commit.Count < commitAverage && lastNote != secondNote)
                 {
                     selectedNote = secondNote;
                 }
-                else if (commit.Count == commitAverage)
+                else if (commit.Count == commitAverage && lastNote != thirdNote)
                 {
                     selectedNote = thirdNote;
                 }
@@ -142,7 +142,7 @@ namespace GithubCommitsToMusic.Features.Queries.Musics
                 {
                     selectedNote = fourTh; // Alçak commit değerleri için sakin sesler
                 }
-
+                lastNote = selectedNote;
                 var note = sheets.FirstOrDefault(a => a.Note == selectedNote);
                 if (note == null || note == musicNotes.LastOrDefault())
                 {
