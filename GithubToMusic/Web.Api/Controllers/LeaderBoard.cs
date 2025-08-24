@@ -35,6 +35,7 @@ namespace GithubCommitsToMusic.Controllers
             var userRanks = result.Select((user, index) => new UserRank(user.UserName, user.TotalCommit, index + 1, user.CreatedOn)).ToList();
             return Ok(userRanks);
         }
+
     }
     public sealed record UserRank(string userName, int totalCommit, int rank, DateTime createdOn);
 }

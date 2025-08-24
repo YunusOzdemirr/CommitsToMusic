@@ -10,7 +10,7 @@ namespace GithubCommitsToMusic.Features.Queries.Users
     {
         public async Task<IList<User>> Handle(GetUsersRankQuery request, CancellationToken cancellationToken)
         {
-            var users = await applicationDbContext.Users.Include(a => a.Commits).ToListAsync(cancellationToken);
+            var users = await applicationDbContext.Users.Include(a => a.Commits).Where(a => a.TotalCommit > 0).ToListAsync(cancellationToken);
             if (users == null || users.Count == 0)
                 return null;
             if (request.OrderBy == OrderBy.Ascending)

@@ -414,22 +414,24 @@ export default function Home() {
 
               <div className="flex flex-col space-y-6 sm:flex-row sm:space-y-0 sm:space-x-6">
                 <div className="relative flex-1">
+                  <label htmlFor="start-date" className="text-white/80 text-sm mb-2 block">Start Date</label>
                   <Input
+                    id="start-date"
                     type="date"
-                    placeholder="Start Date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50 w-full"
+                    className="bg-white/20 border-white/30 text-white focus:ring-2 focus:ring-white/50 w-full"
                     disabled={isLoading}
                   />
                 </div>
                 <div className="relative flex-1">
+                  <label htmlFor="end-date" className="text-white/80 text-sm mb-2 block">End Date</label>
                   <Input
+                    id="end-date"
                     type="date"
-                    placeholder="End Date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/50 w-full"
+                    className="bg-white/20 border-white/30 text-white focus:ring-2 focus:ring-white/50 w-full"
                     disabled={isLoading}
                   />
                 </div>
