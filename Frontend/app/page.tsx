@@ -155,7 +155,7 @@ export default function Home() {
     setIsLeaderboardOpen(false);
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex relative">
       {/* Mobile Leaderboard Toggle Button */}
       <motion.button
         initial={{ x: -50, opacity: 0 }}
@@ -270,7 +270,11 @@ export default function Home() {
         initial={{ x: -300, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="hidden lg:block w-80 bg-white/10 backdrop-blur-lg border-r border-white/20 p-6 overflow-y-auto"
+        className="hidden lg:block absolute left-0 top-0 w-80 bg-white/10 backdrop-blur-lg border-r border-white/20 p-6 overflow-y-auto h-screen scrollbar-hide"
+        style={{
+          scrollbarWidth: 'none', /* Firefox */
+          msOverflowStyle: 'none', /* IE and Edge */
+        }}
       >
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
@@ -344,7 +348,7 @@ export default function Home() {
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-start justify-center p-4 pt-20 lg:pt-4">
+      <div className="w-full lg:pl-80 flex items-center justify-center p-4 pt-20 lg:pt-4 min-h-screen">
         <audio
           ref={audioRef}
           onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
