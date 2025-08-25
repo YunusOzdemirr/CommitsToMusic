@@ -344,7 +344,7 @@ export default function Home() {
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-4 pt-20 lg:pt-4">
+      <div className="flex-1 flex items-start justify-center p-4 pt-20 lg:pt-4">
         <audio
           ref={audioRef}
           onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
