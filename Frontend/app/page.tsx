@@ -377,7 +377,7 @@ export default function Home() {
               <Music2 className="w-12 h-12 text-white animate-bounce" />
             </a>
             <a
-              href="https://github.com/YunusOzdemirr"
+              href="https://github.com/YunusOzdemirr/CommitsToMusic"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -543,12 +543,12 @@ export default function Home() {
                 LinkedIn
               </a>
               <a
-                href="https://github.com/YunusOzdemirr"
+                href="https://github.com/YunusOzdemirr/CommitsToMusic"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white"
               >
-                GitHub
+                For the GitHub Repo Click Here
               </a>
             </div>
           </motion.div>
